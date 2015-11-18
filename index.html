@@ -12,28 +12,13 @@
         margin: 0px;
         height: 100%;
     }
-
-    #zoom-level {
-        margin: 10px;
-        padding: 10px;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 1000;
-        background: #ddd;
-    }
 </style>
 
 <!-- Map placeholder -->
 <div id="map"></div>
 
-<!-- Widget to display zoom level in the upper right corner of the map -->
-<div id='zoom-level'>Zoom Level: 7</div>
-
 <!-- Load Leaflet -->
 <script src="leaflet/leaflet.js"></script>
-<!-- Optional - changes URL to reflect the current location on the map -->
-<script src="lib/leaflet-hash.js"></script>
 <script>
 
     // Allow user to change style via the ?s=xxx URL parameter
@@ -62,7 +47,7 @@
     // Add a map layer
     L.tileLayer('https://maps.wikimedia.org/' + style + '/{z}/{x}/{y}' + scalex + '.png', {
         maxZoom: 18,
-        attribution: 'Wikimedia maps beta | Map data &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+        attribution: 'Wikimedia maps beta | Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         id: 'wikipedia-map-01'
     }).addTo(map);
 
@@ -71,11 +56,7 @@
 
     // Update the zoom level label
     map.on('zoomend', function () {
-        document.getElementById('zoom-level').innerHTML = 'Zoom Level: ' + map.getZoom();
     });
-
-    // Add current location to URL hash
-    var hash = new L.Hash(map);
 </script>
 </body>
 </html>
