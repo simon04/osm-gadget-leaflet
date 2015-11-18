@@ -3,8 +3,11 @@
 // Create a map
 var map = L.map('map').setView([40.75, -73.96], 4);
 
-// Add a map layer
-wikimediaLayer().addTo(map);
+// Add layer switcher
+L.control.layers({
+  'Wikimedia': wikimediaLayer().addTo(map),
+  'OpenStreetMap': osmLayer()
+}).addTo(map);
 
 // Add a km/miles scale
 L.control.scale().addTo(map);
@@ -25,6 +28,14 @@ function wikimediaLayer() {
     attribution: 'Wikimedia maps beta | Map data &copy; ' +
         '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
     id: 'wikipedia-map-01'
+  });
+}
+
+function osmLayer() {
+  return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; ' +
+        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   });
 }
 
