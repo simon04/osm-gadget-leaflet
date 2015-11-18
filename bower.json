@@ -1,0 +1,22 @@
+{
+  "name": "wiwosm2",
+  "version": "0.0.0",
+  "authors": [
+    "Simon Legner <Simon.Legner@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "wiwosm",
+    "map",
+    "wikipedia",
+    "wikidata",
+    "osm-gadget"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "dependencies": {
+    "leaflet": "~0.7.7"
+  }
+}
