@@ -1,20 +1,57 @@
 'use strict';
 
 // Create a map
-var map = L.map('map').setView([40.75, -73.96], 4);
+var map = L.map('map').setView([47.3, 11.3], 9);
+
+// Prepare WIWOSM layer
+var wiwosm = wiwosmLayer();
 
 // Add layer switcher
-L.control.layers({
+var layers = L.control.layers({
   'Wikimedia': wikimediaLayer().addTo(map),
   'OpenStreetMap': osmLayer()
+}, {
+  'WIWOSM': wiwosm.addTo(map)
 }).addTo(map);
 
 // Add a km/miles scale
 L.control.scale().addTo(map);
 
-// Update the zoom level label
-map.on('zoomend', function() {
-});
+loadWIWOSM();
+
+function wiwosmLayer() {
+  return L.geoJson(undefined, {
+    coordsToLatLng: function(coords) {
+      // unproject EPSG:3857
+      var earthRadius = 6378137;
+      var pt = L.point(coords[0], coords[1]);
+      pt = pt.multiplyBy(1 / earthRadius);
+      var ll = L.Projection.SphericalMercator.unproject(pt);
+      return ll;
+    },
+    pointToLayer: function(feature, latlng) {
+      return L.circleMarker(latlng);
+    }
+  });
+}
+
+function loadWIWOSM() {
+  var q = getQuery();
+  if (!q.article || !q.lang) {
+    return;
+  }
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener('load', addLayer);
+  xhr.open('GET', 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
+      'lang=' + q.lang + '&article=' + q.article);
+  xhr.send();
+
+  function addLayer() {
+    var geojson = JSON.parse(this.responseText);
+    wiwosm.addData(geojson);
+    map.fitBounds(wiwosm.getBounds());
+  }
+}
 
 function wikimediaLayer() {
   // Allow user to change style via the ?s=xxx URL parameter
@@ -49,4 +86,27 @@ function bracketDevicePixelRatio() {
     }
   }
   return brackets[brackets.length - 1];
+}
+
+function getQuery() {
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split('&');
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=', 2);
+    var key = pair[0];
+    var value = decodeURIComponent(pair[1]);
+    if (typeof query_string[key] === 'undefined') {
+      // first entry with this name -> store
+      query_string[key] = value;
+    } else if (typeof query_string[pair[0]] === 'string') {
+      // second entry with this name -> convert to array
+      var arr = [query_string[key], value];
+      query_string[key] = arr;
+    } else {
+      // third or later entry with this name -> append to array
+      query_string[key].push(value);
+    }
+  }
+  return query_string;
 }
