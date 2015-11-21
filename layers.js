@@ -1,5 +1,19 @@
 'use strict';
 
+L.TileLayer.OSM = L.TileLayer.extend({
+
+  initialize: function(options) {
+    L.TileLayer.prototype.initialize.call(this,
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', options);
+  },
+
+  options: {
+    maxZoom: 19,
+    attribution: '&copy; ' +
+        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  }
+});
+
 L.TileLayer.WikimediaMaps = L.TileLayer.extend({
 
   initialize: function(options) {

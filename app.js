@@ -19,7 +19,7 @@ var marks = new L.GeoJSON.WikipediaMarks({
 // Add layer switcher
 var layers = L.control.layers({
   'Wikimedia': new L.TileLayer.WikimediaMaps({style: query.style || 'osm-intl'}).addTo(map),
-  'OpenStreetMap': osmLayer()
+  'OpenStreetMap': new L.TileLayer.OSM()
 }, {
   'WIWOSM': wiwosm.addTo(map),
   'Wikipedia World': marks.addTo(map)
@@ -32,14 +32,6 @@ wiwosm.loadWIWOSM();
 map.on('zoomend', function() {
   marks.updateMarks.call(marks);
 });
-
-function osmLayer() {
-  return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; ' +
-        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-  });
-}
 
 function getQuery() {
   var query_string = {};
