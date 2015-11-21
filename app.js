@@ -1,10 +1,15 @@
 'use strict';
 
+var query = getQuery();
+
 // Create a map
 var map = L.map('map').setView([47.3, 11.3], 9);
 
 // Prepare WIWOSM layer
-var wiwosm = wiwosmLayer();
+var wiwosm = new L.GeoJSON.WIWOSM({
+  article: query.article,
+  lang: query.lang
+});
 
 // Add layer switcher
 var layers = L.control.layers({
@@ -17,44 +22,7 @@ var layers = L.control.layers({
 // Add a km/miles scale
 L.control.scale().addTo(map);
 
-loadWIWOSM();
-
-function wiwosmLayer() {
-  return L.geoJson(undefined, {
-    coordsToLatLng: function(coords) {
-      // unproject EPSG:3857
-      var earthRadius = 6378137;
-      var pt = L.point(coords[0], coords[1]);
-      pt = pt.multiplyBy(1 / earthRadius);
-      var ll = L.Projection.SphericalMercator.unproject(pt);
-      return ll;
-    },
-    pointToLayer: function(feature, latlng) {
-      return L.circleMarker(latlng);
-    }
-  });
-}
-
-function loadWIWOSM() {
-  var q = getQuery();
-  if (!q.article || !q.lang) {
-    return;
-  }
-  var xhr = new XMLHttpRequest();
-  xhr.addEventListener('load', addLayer);
-  xhr.open('GET', 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
-      'lang=' + q.lang + '&article=' + q.article);
-  xhr.send();
-
-  function addLayer() {
-    if (this.status !== 200 || !this.responseText) {
-      return;
-    }
-    var geojson = JSON.parse(this.responseText);
-    wiwosm.addData(geojson);
-    map.fitBounds(wiwosm.getBounds());
-  }
-}
+wiwosm.loadWIWOSM();
 
 function wikimediaLayer() {
   var q = getQuery();
