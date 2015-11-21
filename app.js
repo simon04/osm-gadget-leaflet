@@ -88,8 +88,8 @@ function bracketDevicePixelRatio() {
 
 function getQuery() {
   var query_string = {};
-  var query = window.location.search.substring(1);
-  var vars = query.split('&');
+  var hash = window.location.hash.split(/^#\/\?/); // split on #/?
+  var vars = hash && hash[1] && hash[1].split('&') || [];
   for (var i = 0; i < vars.length; i++) {
     var pair = vars[i].split('=', 2);
     var key = pair[0];
