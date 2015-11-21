@@ -54,10 +54,8 @@ function loadWIWOSM() {
 }
 
 function wikimediaLayer() {
-  // Allow user to change style via the ?s=xxx URL parameter
-  // Uses "osm-intl" as the default style
-  var match = window.location.search.match(/s=([^&\/]*)/);
-  var style = (match && match[1]) || 'osm-intl';
+  var q = getQuery();
+  var style = q.s || 'osm-intl'; // Allow user to change style via the ?s=xxx URL parameter
   var scale = bracketDevicePixelRatio();
   var scalex = (scale === 1) ? '' : ('@' + scale + 'x');
   return L.tileLayer('https://maps.wikimedia.org/' + style + '/{z}/{x}/{y}' + scalex + '.png', {
