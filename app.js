@@ -11,18 +11,27 @@ var wiwosm = new L.GeoJSON.WIWOSM({
   lang: query.lang
 });
 
+// Prepare marks layer
+var marks = new L.GeoJSON.WikipediaMarks({
+  lang: query.lang
+});
+
 // Add layer switcher
 var layers = L.control.layers({
   'Wikimedia': wikimediaLayer().addTo(map),
   'OpenStreetMap': osmLayer()
 }, {
-  'WIWOSM': wiwosm.addTo(map)
+  'WIWOSM': wiwosm.addTo(map),
+  'Wikipedia World': marks.addTo(map)
 }).addTo(map);
 
 // Add a km/miles scale
 L.control.scale().addTo(map);
 
 wiwosm.loadWIWOSM();
+map.on('zoomend', function() {
+  marks.updateMarks.call(marks);
+});
 
 function wikimediaLayer() {
   var q = getQuery();
