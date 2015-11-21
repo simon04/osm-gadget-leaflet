@@ -18,7 +18,7 @@ var marks = new L.GeoJSON.WikipediaMarks({
 
 // Add layer switcher
 var layers = L.control.layers({
-  'Wikimedia': wikimediaLayer().addTo(map),
+  'Wikimedia': new L.TileLayer.WikimediaMaps({style: query.style || 'osm-intl'}).addTo(map),
   'OpenStreetMap': osmLayer()
 }, {
   'WIWOSM': wiwosm.addTo(map),
@@ -33,37 +33,12 @@ map.on('zoomend', function() {
   marks.updateMarks.call(marks);
 });
 
-function wikimediaLayer() {
-  var q = getQuery();
-  var style = q.s || 'osm-intl'; // Allow user to change style via the ?s=xxx URL parameter
-  var scale = bracketDevicePixelRatio();
-  var scalex = (scale === 1) ? '' : ('@' + scale + 'x');
-  return L.tileLayer('https://maps.wikimedia.org/' + style + '/{z}/{x}/{y}' + scalex + '.png', {
-    maxZoom: 18,
-    attribution: 'Wikimedia maps beta | Map data &copy; ' +
-        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-    id: 'wikipedia-map-01'
-  });
-}
-
 function osmLayer() {
   return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; ' +
         '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   });
-}
-
-function bracketDevicePixelRatio() {
-  var brackets = [1, 1.3, 1.5, 2, 2.6, 3];
-  var baseRatio = window.devicePixelRatio || 1;
-  for (var i = 0; i < brackets.length; i++) {
-    var scale = brackets[i];
-    if (scale >= baseRatio || (baseRatio - scale) < 0.1) {
-      return scale;
-    }
-  }
-  return brackets[brackets.length - 1];
 }
 
 function getQuery() {

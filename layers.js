@@ -1,5 +1,35 @@
 'use strict';
 
+L.TileLayer.WikimediaMaps = L.TileLayer.extend({
+
+  initialize: function(options) {
+    var scale = bracketDevicePixelRatio();
+    var scalex = (scale === 1) ? '' : ('@' + scale + 'x');
+    L.TileLayer.prototype.initialize.call(this,
+        'https://maps.wikimedia.org/{style}/{z}/{x}/{y}' + scalex + '.png', options);
+
+    function bracketDevicePixelRatio() {
+      var brackets = [1, 1.3, 1.5, 2, 2.6, 3];
+      var baseRatio = window.devicePixelRatio || 1;
+      for (var i = 0; i < brackets.length; i++) {
+        var scale = brackets[i];
+        if (scale >= baseRatio || (baseRatio - scale) < 0.1) {
+          return scale;
+        }
+      }
+      return brackets[brackets.length - 1];
+    }
+  },
+
+  options: {
+    style: 'osm-intl',
+    maxZoom: 18,
+    attribution: 'Wikimedia maps beta | Map data &copy; ' +
+        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  }
+
+});
+
 L.GeoJSON.WIWOSM = L.GeoJSON.extend({
 
   initialize: function(options) {
