@@ -47,6 +47,9 @@ function loadWIWOSM() {
   xhr.send();
 
   function addLayer() {
+    if (this.status !== 200 || !this.responseText) {
+      return;
+    }
     var geojson = JSON.parse(this.responseText);
     wiwosm.addData(geojson);
     map.fitBounds(wiwosm.getBounds());
