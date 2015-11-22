@@ -1,16 +1,44 @@
 'use strict';
 
 L.TileLayer.OSM = L.TileLayer.extend({
-
   initialize: function(options) {
     L.TileLayer.prototype.initialize.call(this,
         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', options);
   },
-
   options: {
     maxZoom: 19,
     attribution: '&copy; ' +
         '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  }
+});
+
+L.TileLayer.PublicTransport = L.TileLayer.extend({
+  initialize: function(options) {
+    L.TileLayer.prototype.initialize.call(this,
+        'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png', options);
+  },
+  options: {
+    attribution: L.TileLayer.OSM.prototype.options.attribution
+  }
+});
+
+L.TileLayer.WMFLabs = L.TileLayer.extend({
+  initialize: function(options) {
+    L.TileLayer.prototype.initialize.call(this,
+        'https://tiles.wmflabs.org/{style}/{z}/{x}/{y}.png', options);
+  },
+  options: {
+    attribution: L.TileLayer.OSM.prototype.options.attribution
+  }
+});
+
+L.TileLayer.OSMde = L.TileLayer.extend({
+  initialize: function(options) {
+    L.TileLayer.prototype.initialize.call(this,
+        'http://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', options);
+  },
+  options: {
+    attribution: L.TileLayer.OSM.prototype.options.attribution
   }
 });
 

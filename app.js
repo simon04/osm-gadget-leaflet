@@ -19,11 +19,17 @@ var marks = new L.GeoJSON.WikipediaMarks({
 // Add layer switcher
 var layers = L.control.layers({
   'Wikimedia': new L.TileLayer.WikimediaMaps({style: query.style || 'osm-intl'}).addTo(map),
+  'HikeBike': new L.TileLayer.WMFLabs({style: 'hikebike'}),
+  'Public Transport (ÖPNV)': new L.TileLayer.PublicTransport(),
   'OpenStreetMap': new L.TileLayer.OSM()
 }, {
   'WIWOSM': wiwosm.addTo(map),
   'Wikipedia World': marks.addTo(map)
 }).addTo(map);
+
+if (query.lang === 'de') {
+  layers.addBaseLayer(new L.TileLayer.OSMde(), 'OpenStreetMap.de');
+}
 
 // Add a km/miles scale
 L.control.scale().addTo(map);
