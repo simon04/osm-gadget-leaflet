@@ -81,9 +81,7 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
   options: {
     coordsToLatLng: function(coords) {
       // unproject EPSG:3857
-      var earthRadius = 6378137;
       var pt = L.point(coords[0], coords[1]);
-      pt = pt.multiplyBy(1 / earthRadius);
       var ll = L.Projection.SphericalMercator.unproject(pt);
       return ll;
     },
