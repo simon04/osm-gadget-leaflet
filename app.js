@@ -24,7 +24,8 @@ var layers = L.control.layers({
   'OpenStreetMap': new L.TileLayer.OSM()
 }, {
   'WIWOSM': wiwosm.addTo(map),
-  'Wikipedia World': marks.addTo(map)
+  'Wikipedia World': marks.addTo(map),
+  'Hill Shading': new L.TileLayer.WMFLabs({style: 'hillshading'})
 }).addTo(map);
 
 if (query.lang === 'de') {
