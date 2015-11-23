@@ -108,6 +108,7 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
         return;
       }
       var geojson = JSON.parse(this.responseText);
+      me.clearLayers();
       me.addData(geojson);
       me._map.fitBounds(me.getBounds());
     }

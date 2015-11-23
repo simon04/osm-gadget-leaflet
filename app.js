@@ -36,6 +36,10 @@ if (query.lang === 'de') {
 L.control.scale().addTo(map);
 
 wiwosm.loadWIWOSM();
+window.addEventListener('hashchange', function() {
+  L.setOptions(wiwosm, getQuery());
+  wiwosm.loadWIWOSM();
+});
 map.on('zoomend', function() {
   marks.updateMarks.call(marks);
 });
