@@ -95,20 +95,31 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
     var me = this;
     if (!this.options.article || !this.options.lang) {
       return;
+    } else if (typeof this.options.article === 'object') {
+      this.clearLayers();
+      this.options.article.map(loadArticle);
+    } else {
+      var doClear = true;
+      loadArticle(this.options.article);
     }
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', addData);
-    xhr.open('GET', 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
-        'lang=' + this.options.lang + '&article=' + this.options.article);
-    xhr.send();
     return this;
+
+    function loadArticle(article) {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener('load', addData);
+      xhr.open('GET', 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
+          'lang=' + me.options.lang + '&article=' + article);
+      xhr.send();
+    }
 
     function addData() {
       if (this.status !== 200 || !this.responseText) {
         return;
       }
       var geojson = JSON.parse(this.responseText);
-      me.clearLayers();
+      if (doClear) {
+        me.clearLayers();
+      }
       me.addData(geojson);
       me._map.fitBounds(me.getBounds());
     }
