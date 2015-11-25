@@ -140,7 +140,12 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
     pointToLayer: function(feature, latlng) {
       if (feature.properties.title && feature.properties.wikipediaUrl) {
         var html = L.Util.template('<a href="{wikipediaUrl}">{title}</a>', feature.properties);
-        return L.marker(latlng).bindPopup(html);
+        if (feature.properties.thumbnail) {
+          html = html + L.Util.template('<p><img src="{thumbnail}"></p>', feature.properties);
+        }
+        return L.marker(latlng).bindPopup(html, {
+          minWidth: 200
+        });
       } else {
         return L.marker(latlng);
       }
