@@ -207,6 +207,7 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
         return;
       }
       var geojson = JSON.parse(this.responseText);
+      me.clearLayers();
       me.addData(geojson);
     }
   }
