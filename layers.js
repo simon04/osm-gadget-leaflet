@@ -138,16 +138,54 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
     thumbs: 0,
 
     pointToLayer: function(feature, latlng) {
+      var icon = getIcon(feature.properties.feature);
       if (feature.properties.title && feature.properties.wikipediaUrl) {
         var html = L.Util.template('<a href="{wikipediaUrl}">{title}</a>', feature.properties);
         if (feature.properties.thumbnail) {
           html = html + L.Util.template('<p><img src="{thumbnail}"></p>', feature.properties);
         }
-        return L.marker(latlng).bindPopup(html, {
+        return L.marker(latlng, {icon: icon}).bindPopup(html, {
           minWidth: 200
         });
       } else {
-        return L.marker(latlng);
+        return L.marker(latlng, {icon: icon});
+      }
+
+      function getIcon(feature) {
+        var customIcon = getIconForFeature(feature);
+        if (customIcon) {
+          return L.divIcon({
+            className: customIcon,
+            iconSize: [24, 24],
+            iconAnchor: [12, -3]
+          });
+        }
+        return new L.Icon.Default();
+      }
+
+      function getIconForFeature(feature) {
+        var iconForFeature = {
+          country: 'maki-icon prison',
+          satellite: 'maki-icon rocket',
+          state: 'maki-icon prison',
+          adm1st: 'maki-icon city',
+          adm2nd: 'maki-icon town',
+          adm3rd: 'maki-icon village',
+          city: 'maki-icon city',
+          isle: 'maki-icon land-use',
+          mountain: 'maki-icon triangle',
+          river: 'maki-icon water',
+          waterbody: 'maki-icon water',
+          event: 'maki-icon theatre',
+          forest: 'maki-icon park',
+          glacier: 'maki-icon land-use',
+          airport: 'maki-icon airport',
+          railwaystation: 'maki-icon rail',
+          edu: 'maki-icon college',
+          pass: 'maki-icon golf',
+          landmark: 'maki-icon marker'
+        };
+        return feature && iconForFeature[feature];
       }
     }
   },
