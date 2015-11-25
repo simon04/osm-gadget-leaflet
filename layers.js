@@ -165,13 +165,13 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
 
       function getIconForFeature(feature) {
         var iconForFeature = {
-          country: 'maki-icon prison',
+          country: 'maki-icon circle',
           satellite: 'maki-icon rocket',
-          state: 'maki-icon prison',
-          adm1st: 'maki-icon city',
-          adm2nd: 'maki-icon town',
-          adm3rd: 'maki-icon village',
-          city: 'maki-icon city',
+          state: 'maki-icon circle',
+          adm1st: 'maki-icon circle',
+          adm2nd: 'maki-icon circle',
+          adm3rd: 'maki-icon circle',
+          city: 'maki-icon circle',
           isle: 'maki-icon land-use',
           mountain: 'maki-icon triangle',
           river: 'maki-icon water',
