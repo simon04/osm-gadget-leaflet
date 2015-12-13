@@ -139,16 +139,24 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
 
     pointToLayer: function(feature, latlng) {
       var icon = getIcon(feature.properties.feature);
-      if (feature.properties.title && feature.properties.wikipediaUrl) {
-        var html = L.Util.template('<a href="{wikipediaUrl}">{title}</a>', feature.properties);
-        if (feature.properties.thumbnail) {
-          html = html + L.Util.template('<p><img src="{thumbnail}"></p>', feature.properties);
-        }
-        return L.marker(latlng, {icon: icon}).bindPopup(html, {
+      var marker = L.marker(latlng, {icon: icon});
+      var popup = getPopupHtml(feature);
+      if (popup) {
+        marker.bindPopup(popup, {
           minWidth: 200
         });
-      } else {
-        return L.marker(latlng, {icon: icon});
+      }
+      return marker;
+
+      function getPopupHtml(feature) {
+        var html;
+        if (feature.properties.title && feature.properties.wikipediaUrl) {
+          html = L.Util.template('<a href="{wikipediaUrl}">{title}</a>', feature.properties);
+          if (feature.properties.thumbnail) {
+            html = html + L.Util.template('<p><img src="{thumbnail}"></p>', feature.properties);
+          }
+        }
+        return html;
       }
 
       function getIcon(feature) {
