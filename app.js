@@ -40,9 +40,7 @@ window.addEventListener('hashchange', function() {
   L.setOptions(wiwosm, getQuery());
   wiwosm.loadWIWOSM();
 });
-map.on('zoomend', function() {
-  marks.updateMarks.call(marks);
-});
+map.on('zoomend moveend', marks.updateMarks, marks);
 
 function getQuery() {
   var query_string = {};
