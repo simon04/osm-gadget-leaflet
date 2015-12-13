@@ -1,5 +1,6 @@
 {
   "root": true,
+  "extends": "eslint:recommended",
   "env": {
     "browser": true
   },
@@ -7,14 +8,7 @@
     "L": false
   },
   "rules": {
-    "no-debugger": 2,
-    "no-dupe-args": 2,
-    "no-dupe-keys": 2,
-    "no-duplicate-case": 2,
-    "no-ex-assign": 2,
-    "no-unreachable": 2,
-    "valid-typeof": 2,
-    "no-fallthrough": 2,
+    "no-unused-expressions": 2,
     "quotes": [2, "single", "avoid-escape"],
     "indent": [2, 2],
     "comma-spacing": 2,
@@ -31,10 +25,6 @@
     "no-multiple-empty-lines": [2, {"max": 2}],
     "eol-last": 2,
     "no-trailing-spaces": 2,
-    "strict": [2, "global"],
-    "dot-notation": 0,
-    "no-use-before-define": 0,
-    "semi-spacing": 0,
-    "no-undef": 2
+    "strict": [2, "global"]
   }
 }
