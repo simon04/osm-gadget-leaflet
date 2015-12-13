@@ -195,13 +195,17 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
         };
         return feature && iconForFeature[feature];
       }
-    }
+    };
   },
 
   updateMarks: function() {
     var me = this;
-    var url = L.Util.template('https://tools.wmflabs.org/wp-world/marks-geojson.php?' +
-        'LANG={lang}&coats={coats}&thumbs={thumbs}', this.options);
+    var url = L.Util.template('https://tools.wmflabs.org/wp-world/marks-geojson.php?' + [
+      'maxRows=80',
+      'LANG={lang}',
+      'coats={coats}',
+      'thumbs={thumbs}'
+    ].join('&'), this.options);
     url = url + '&bbox=' + this._map.getBounds().toBBoxString();
 
     var xhr = new XMLHttpRequest();
