@@ -10,3 +10,8 @@ Examples
 * https://tools.wmflabs.org/wiwosm/osm-gadget-leaflet/#/?lang=en&article=Austria
 * https://tools.wmflabs.org/wiwosm/osm-gadget-leaflet/#/?lang=wikidata&article=Q40
 * https://tools.wmflabs.org/wiwosm/osm-gadget-leaflet/#/?lang=wikidata&article=Q40&article=Q183
+
+Building
+--------
+1. Run `npm install` or `bower install` to obtain the libraries
+2. Open `index.html` in the browser and specify a query, e.g., `index.html#/?lang=en&article=Austria`
