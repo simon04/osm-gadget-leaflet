@@ -18,6 +18,7 @@
   "homepage": "",
   "dependencies": {
     "leaflet": "~1.0",
+    "Leaflet.LayerGroup.Collision": "simon04/Leaflet.LayerGroup.Collision#eccb250544b0",
     "maki": "mapbox/maki#~0.5.0"
   }
 }

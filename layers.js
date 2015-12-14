@@ -126,20 +126,33 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
   }
 });
 
-L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
+L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
 
   initialize: function(options) {
-    L.GeoJSON.prototype.initialize.call(this, undefined, options);
+    L.Util.setOptions(this, options);
+    L.LayerGroup.prototype.initialize.call(this, []);
+    new L.GeoJSON(undefined, {
+      pointToLayer: this._makePointToLayer(true)
+    }).addTo(this);
+    new L.GeoJSON.Collision(undefined, {
+      pointToLayer: this._makePointToLayer(false)
+    }).addTo(this);
   },
 
   options: {
     lang: 'en',
     coats: 0,
-    thumbs: 0,
+    thumbs: 0
+  },
 
-    pointToLayer: function(feature, latlng) {
-      var icon = getIcon(feature.properties.feature);
-      var marker = L.marker(latlng, {icon: icon});
+  _makePointToLayer: function(icons) {
+
+    return function(feature, latlng) {
+      var icon = icons ? getIcon(feature.properties.feature) : getDivIcon(feature);
+      var marker = L.marker(latlng, {
+        icon: icon,
+        zIndexOffset: icons ? 0 : 100
+      });
       var popup = getPopupHtml(feature);
       if (popup) {
         marker.bindPopup(popup, {
@@ -157,6 +170,14 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
           }
         }
         return html;
+      }
+
+      function getDivIcon(feature) {
+        return L.divIcon({
+          iconSize: '',
+          iconAnchor: [-10, -5],
+          html: feature.properties.title
+        });
       }
 
       function getIcon(feature) {
@@ -219,8 +240,8 @@ L.GeoJSON.WikipediaMarks = L.GeoJSON.extend({
         return;
       }
       var geojson = JSON.parse(this.responseText);
-      me.clearLayers();
-      me.addData(geojson);
+      me.invoke('clearLayers');
+      me.invoke('addData', geojson);
     }
   }
 
