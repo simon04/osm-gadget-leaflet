@@ -158,6 +158,19 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
         marker.bindPopup(popup, {
           minWidth: 200
         });
+        marker.on('click', function() {
+          this.openPopup();
+          this.openedViaMouseOver = false;
+        });
+        marker.on('mouseover', function() {
+          this.openPopup();
+          this.openedViaMouseOver = true;
+        });
+        marker.on('mouseout', function() {
+          if (this.openedViaMouseOver) {
+            this.closePopup();
+          }
+        });
       }
       return marker;
 
