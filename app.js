@@ -8,12 +8,12 @@ var map = L.map('map').setView([47.3, 11.3], 9);
 // Prepare WIWOSM layer
 var wiwosm = new L.GeoJSON.WIWOSM({
   article: query.article,
-  lang: query.lang
+  lang: query.lang || 'en'
 });
 
 // Prepare marks layer
 var marks = new L.GeoJSON.WikipediaMarks({
-  lang: query.lang
+  lang: query.lang || 'en'
 });
 
 // Add layer switcher
