@@ -2,20 +2,27 @@
 
 L.TileLayer.OSM = L.TileLayer.extend({
   initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(this,
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', options);
+    L.TileLayer.prototype.initialize.call(
+      this,
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      options
+    );
   },
   options: {
     maxZoom: 19,
-    attribution: '&copy; ' +
-        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    attribution:
+      '&copy; ' +
+      '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   }
 });
 
 L.TileLayer.PublicTransport = L.TileLayer.extend({
   initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(this,
-        'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png', options);
+    L.TileLayer.prototype.initialize.call(
+      this,
+      'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
+      options
+    );
   },
   options: {
     attribution: L.TileLayer.OSM.prototype.options.attribution
@@ -24,8 +31,11 @@ L.TileLayer.PublicTransport = L.TileLayer.extend({
 
 L.TileLayer.WMFLabs = L.TileLayer.extend({
   initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(this,
-        'https://tiles.wmflabs.org/{style}/{z}/{x}/{y}.png', options);
+    L.TileLayer.prototype.initialize.call(
+      this,
+      'https://tiles.wmflabs.org/{style}/{z}/{x}/{y}.png',
+      options
+    );
   },
   options: {
     attribution: L.TileLayer.OSM.prototype.options.attribution
@@ -34,8 +44,11 @@ L.TileLayer.WMFLabs = L.TileLayer.extend({
 
 L.TileLayer.OSMde = L.TileLayer.extend({
   initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(this,
-        'http://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png', options);
+    L.TileLayer.prototype.initialize.call(
+      this,
+      'http://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
+      options
+    );
   },
   options: {
     attribution: L.TileLayer.OSM.prototype.options.attribution
@@ -43,19 +56,21 @@ L.TileLayer.OSMde = L.TileLayer.extend({
 });
 
 L.TileLayer.WikimediaMaps = L.TileLayer.extend({
-
   initialize: function(options) {
     var scale = bracketDevicePixelRatio();
-    var scalex = (scale === 1) ? '' : ('@' + scale + 'x');
-    L.TileLayer.prototype.initialize.call(this,
-        'https://maps.wikimedia.org/{style}/{z}/{x}/{y}' + scalex + '.png', options);
+    var scalex = scale === 1 ? '' : '@' + scale + 'x';
+    L.TileLayer.prototype.initialize.call(
+      this,
+      'https://maps.wikimedia.org/{style}/{z}/{x}/{y}' + scalex + '.png',
+      options
+    );
 
     function bracketDevicePixelRatio() {
       var brackets = [1, 1.3, 1.5, 2, 2.6, 3];
       var baseRatio = window.devicePixelRatio || 1;
       for (var i = 0; i < brackets.length; i++) {
         var scale = brackets[i];
-        if (scale >= baseRatio || (baseRatio - scale) < 0.1) {
+        if (scale >= baseRatio || baseRatio - scale < 0.1) {
           return scale;
         }
       }
@@ -66,14 +81,13 @@ L.TileLayer.WikimediaMaps = L.TileLayer.extend({
   options: {
     style: 'osm-intl',
     maxZoom: 18,
-    attribution: 'Wikimedia maps beta | Map data &copy; ' +
-        '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    attribution:
+      'Wikimedia maps beta | Map data &copy; ' +
+      '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   }
-
 });
 
 L.GeoJSON.WIWOSM = L.GeoJSON.extend({
-
   initialize: function(options) {
     L.GeoJSON.prototype.initialize.call(this, undefined, options);
   },
@@ -107,8 +121,14 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
     function loadArticle(article) {
       var xhr = new XMLHttpRequest();
       xhr.addEventListener('load', addData);
-      xhr.open('GET', 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
-          'lang=' + me.options.lang + '&article=' + article);
+      xhr.open(
+        'GET',
+        'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
+          'lang=' +
+          me.options.lang +
+          '&article=' +
+          article
+      );
       xhr.send();
     }
 
@@ -127,7 +147,6 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
 });
 
 L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
-
   initialize: function(options) {
     L.Util.setOptions(this, options);
     L.LayerGroup.prototype.initialize.call(this, []);
@@ -146,9 +165,10 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
   },
 
   _makePointToLayer: function(icons) {
-
     return function(feature, latlng) {
-      var icon = icons ? getIcon(feature.properties.feature) : getDivIcon(feature);
+      var icon = icons
+        ? getIcon(feature.properties.feature)
+        : getDivIcon(feature);
       var marker = L.marker(latlng, {
         icon: icon,
         zIndexOffset: icons ? 0 : 100
@@ -177,9 +197,17 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
       function getPopupHtml(feature) {
         var html;
         if (feature.properties.title && feature.properties.wikipediaUrl) {
-          html = L.Util.template('<a href="{wikipediaUrl}">{title}</a>', feature.properties);
+          html = L.Util.template(
+            '<a href="{wikipediaUrl}">{title}</a>',
+            feature.properties
+          );
           if (feature.properties.thumbnail) {
-            html = html + L.Util.template('<p><img src="{thumbnail}"></p>', feature.properties);
+            html =
+              html +
+              L.Util.template(
+                '<p><img src="{thumbnail}"></p>',
+                feature.properties
+              );
           }
         }
         return html;
@@ -234,12 +262,13 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
 
   updateMarks: function() {
     var me = this;
-    var url = L.Util.template('https://tools.wmflabs.org/wp-world/marks-geojson.php?' + [
-      'maxRows=80',
-      'LANG={lang}',
-      'coats={coats}',
-      'thumbs={thumbs}'
-    ].join('&'), this.options);
+    var url = L.Util.template(
+      'https://tools.wmflabs.org/wp-world/marks-geojson.php?' +
+        ['maxRows=80', 'LANG={lang}', 'coats={coats}', 'thumbs={thumbs}'].join(
+          '&'
+        ),
+      this.options
+    );
     url = url + '&bbox=' + this._map.getBounds().toBBoxString();
 
     var xhr = new XMLHttpRequest();
@@ -257,5 +286,4 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
       me.invoke('addData', geojson);
     }
   }
-
 });

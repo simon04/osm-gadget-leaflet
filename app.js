@@ -17,16 +17,23 @@ var marks = new L.GeoJSON.WikipediaMarks({
 });
 
 // Add layer switcher
-var layers = L.control.layers({
-  'Wikimedia': new L.TileLayer.WikimediaMaps({style: query.style || 'osm-intl'}).addTo(map),
-  'HikeBike': new L.TileLayer.WMFLabs({style: 'hikebike'}),
-  'Public Transport (ÖPNV)': new L.TileLayer.PublicTransport(),
-  'OpenStreetMap': new L.TileLayer.OSM()
-}, {
-  'WIWOSM': wiwosm.addTo(map),
-  'Wikipedia World': marks.addTo(map),
-  'Hill Shading': new L.TileLayer.WMFLabs({style: 'hillshading'})
-}).addTo(map);
+var layers = L.control
+  .layers(
+    {
+      Wikimedia: new L.TileLayer.WikimediaMaps({
+        style: query.style || 'osm-intl'
+      }).addTo(map),
+      HikeBike: new L.TileLayer.WMFLabs({ style: 'hikebike' }),
+      'Public Transport (ÖPNV)': new L.TileLayer.PublicTransport(),
+      OpenStreetMap: new L.TileLayer.OSM()
+    },
+    {
+      WIWOSM: wiwosm.addTo(map),
+      'Wikipedia World': marks.addTo(map),
+      'Hill Shading': new L.TileLayer.WMFLabs({ style: 'hillshading' })
+    }
+  )
+  .addTo(map);
 
 if (query.lang === 'de') {
   layers.addBaseLayer(new L.TileLayer.OSMde(), 'OpenStreetMap.de');
@@ -45,7 +52,7 @@ map.on('zoomend moveend', marks.updateMarks, marks);
 function getQuery() {
   var query_string = {};
   var hash = window.location.hash.split(/^#\/\?/); // split on #/?
-  var vars = hash && hash[1] && hash[1].split('&') || [];
+  var vars = (hash && hash[1] && hash[1].split('&')) || [];
   for (var i = 0; i < vars.length; i++) {
     var pair = vars[i].split('=', 2);
     var key = pair[0];
