@@ -21,9 +21,10 @@ var layers = L.control
   .layers(
     {
       Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),
+      OpenStreetMap: L.tileLayer.provider('OpenStreetMap'),
       HikeBike: L.tileLayer.provider('HikeBike'),
       'Public Transport (ÖPNV)': L.tileLayer.provider('memomaps'),
-      OpenStreetMap: L.tileLayer.provider('OpenStreetMap')
+      OpenTopoMap: L.tileLayer.provider('OpenTopoMap')
     },
     {
       WIWOSM: wiwosm.addTo(map),
