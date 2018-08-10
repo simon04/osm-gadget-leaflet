@@ -20,23 +20,24 @@ var marks = new L.GeoJSON.WikipediaMarks({
 var layers = L.control
   .layers(
     {
-      Wikimedia: new L.TileLayer.WikimediaMaps({
-        style: query.style || 'osm-intl'
-      }).addTo(map),
-      HikeBike: new L.TileLayer.WMFLabs({ style: 'hikebike' }),
-      'Public Transport (ÖPNV)': new L.TileLayer.PublicTransport(),
-      OpenStreetMap: new L.TileLayer.OSM()
+      Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),
+      HikeBike: L.tileLayer.provider('HikeBike'),
+      'Public Transport (ÖPNV)': L.tileLayer.provider('memomaps'),
+      OpenStreetMap: L.tileLayer.provider('OpenStreetMap')
     },
     {
       WIWOSM: wiwosm.addTo(map),
       'Wikipedia World': marks.addTo(map),
-      'Hill Shading': new L.TileLayer.WMFLabs({ style: 'hillshading' })
+      'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
     }
   )
   .addTo(map);
 
 if (query.lang === 'de') {
-  layers.addBaseLayer(new L.TileLayer.OSMde(), 'OpenStreetMap.de');
+  layers.addBaseLayer(
+    L.tileLayer.provider('OpenStreetMap.DE'),
+    'OpenStreetMap.de'
+  );
 }
 
 // Add a km/miles scale

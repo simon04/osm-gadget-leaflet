@@ -12,92 +12,12 @@ L.GeoJSON.Collision.prototype.initialize = function(geojson, options) {
   this._rbush = null;
 };
 
-L.TileLayer.OSM = L.TileLayer.extend({
-  initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(
-      this,
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      options
-    );
-  },
+L.TileLayer.Provider.providers.memomaps = {
+  url: 'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
   options: {
-    maxZoom: 19,
-    attribution:
-      '&copy; ' +
-      '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    attribution: '{attribution.OpenStreetMap}'
   }
-});
-
-L.TileLayer.PublicTransport = L.TileLayer.extend({
-  initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(
-      this,
-      'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
-      options
-    );
-  },
-  options: {
-    attribution: L.TileLayer.OSM.prototype.options.attribution
-  }
-});
-
-L.TileLayer.WMFLabs = L.TileLayer.extend({
-  initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(
-      this,
-      'https://tiles.wmflabs.org/{style}/{z}/{x}/{y}.png',
-      options
-    );
-  },
-  options: {
-    attribution: L.TileLayer.OSM.prototype.options.attribution
-  }
-});
-
-L.TileLayer.OSMde = L.TileLayer.extend({
-  initialize: function(options) {
-    L.TileLayer.prototype.initialize.call(
-      this,
-      'http://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
-      options
-    );
-  },
-  options: {
-    attribution: L.TileLayer.OSM.prototype.options.attribution
-  }
-});
-
-L.TileLayer.WikimediaMaps = L.TileLayer.extend({
-  initialize: function(options) {
-    var scale = bracketDevicePixelRatio();
-    var scalex = scale === 1 ? '' : '@' + scale + 'x';
-    L.TileLayer.prototype.initialize.call(
-      this,
-      'https://maps.wikimedia.org/{style}/{z}/{x}/{y}' + scalex + '.png',
-      options
-    );
-
-    function bracketDevicePixelRatio() {
-      var brackets = [1, 1.3, 1.5, 2, 2.6, 3];
-      var baseRatio = window.devicePixelRatio || 1;
-      for (var i = 0; i < brackets.length; i++) {
-        var scale = brackets[i];
-        if (scale >= baseRatio || baseRatio - scale < 0.1) {
-          return scale;
-        }
-      }
-      return brackets[brackets.length - 1];
-    }
-  },
-
-  options: {
-    style: 'osm-intl',
-    maxZoom: 18,
-    attribution:
-      'Wikimedia maps beta | Map data &copy; ' +
-      '<a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-  }
-});
+};
 
 L.GeoJSON.WIWOSM = L.GeoJSON.extend({
   initialize: function(options) {
