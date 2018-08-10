@@ -51,16 +51,14 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
     return this;
 
     function loadArticle(article) {
+      var url = 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php';
+      url += L.Util.getParamString({
+        lang: me.options.lang,
+        article: article
+      });
       var xhr = new XMLHttpRequest();
       xhr.addEventListener('load', addData);
-      xhr.open(
-        'GET',
-        'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php?' +
-          'lang=' +
-          me.options.lang +
-          '&article=' +
-          article
-      );
+      xhr.open('GET', url);
       xhr.send();
     }
 
@@ -196,14 +194,14 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
     if (!this._map) {
       return;
     }
-    var url = L.Util.template(
-      'https://tools.wmflabs.org/wp-world/marks-geojson.php?' +
-        ['maxRows=80', 'LANG={lang}', 'coats={coats}', 'thumbs={thumbs}'].join(
-          '&'
-        ),
-      this.options
-    );
-    url = url + '&bbox=' + this._map.getBounds().toBBoxString();
+    var url = 'https://tools.wmflabs.org/wp-world/marks-geojson.php';
+    url += L.Util.getParamString({
+      maxRows: 80,
+      LANG: this.options.lang,
+      coats: this.options.coats,
+      thumbs: this.options.thumbs,
+      bbox: this._map.getBounds().toBBoxString()
+    });
 
     var xhr = new XMLHttpRequest();
     xhr.addEventListener('load', updateLayer.bind(this));
