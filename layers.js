@@ -193,7 +193,9 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
   },
 
   updateMarks: function() {
-    var me = this;
+    if (!this._map) {
+      return;
+    }
     var url = L.Util.template(
       'https://tools.wmflabs.org/wp-world/marks-geojson.php?' +
         ['maxRows=80', 'LANG={lang}', 'coats={coats}', 'thumbs={thumbs}'].join(
@@ -204,7 +206,7 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
     url = url + '&bbox=' + this._map.getBounds().toBBoxString();
 
     var xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', updateLayer);
+    xhr.addEventListener('load', updateLayer.bind(this));
     xhr.open('GET', url);
     xhr.send();
     return this;
@@ -214,8 +216,8 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
         return;
       }
       var geojson = JSON.parse(this.responseText);
-      me.invoke('clearLayers');
-      me.invoke('addData', geojson);
+      this.invoke('clearLayers');
+      this.invoke('addData', geojson);
     }
   }
 });

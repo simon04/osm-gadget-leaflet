@@ -28,7 +28,7 @@ var layers = L.control
     },
     {
       WIWOSM: wiwosm.addTo(map),
-      'Wikipedia World': marks.addTo(map),
+      'Wikipedia World': marks,
       'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
     }
   )
