@@ -12,8 +12,22 @@ var wiwosm = new L.GeoJSON.WIWOSM({
 });
 
 // Prepare marks layer
-var marks = new L.GeoJSON.WikipediaMarks({
-  lang: query.lang || 'en'
+var commons = new L.GeoJSON.Geosearch({
+  url: 'https://commons.wikimedia.org',
+  icon: {
+    iconUrl:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Commons-logo-2.svg/20px-Commons-logo-2.svg.png',
+    iconSize: [20, 27]
+  },
+  gsnamespace: 6
+});
+var marks = new L.GeoJSON.Geosearch({
+  url: 'https://' + (query.lang || 'en') + '.wikipedia.org',
+  icon: {
+    iconUrl:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/20px-Wikipedia-logo-v2.svg.png',
+    iconSize: [20, 18]
+  }
 });
 
 // Add layer switcher
@@ -28,7 +42,8 @@ var layers = L.control
     },
     {
       WIWOSM: wiwosm.addTo(map),
-      'Wikipedia World': marks,
+      'Commons World': commons.addTo(map),
+      'Wikipedia World': marks.addTo(map),
       'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
     }
   )
@@ -49,6 +64,7 @@ window.addEventListener('hashchange', function() {
   L.setOptions(wiwosm, getQuery());
   wiwosm.loadWIWOSM();
 });
+map.on('zoomend moveend', commons.updateMarks, commons);
 map.on('zoomend moveend', marks.updateMarks, marks);
 
 function getQuery() {

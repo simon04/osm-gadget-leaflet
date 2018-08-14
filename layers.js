@@ -76,131 +76,87 @@ L.GeoJSON.WIWOSM = L.GeoJSON.extend({
   }
 });
 
-L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
+L.GeoJSON.Geosearch = L.GeoJSON.extend({
   initialize: function(options) {
-    L.Util.setOptions(this, options);
-    L.LayerGroup.prototype.initialize.call(this, []);
-    new L.GeoJSON(undefined, {
-      pointToLayer: this._makePointToLayer(true)
-    }).addTo(this);
-    new L.GeoJSON.Collision(undefined, {
-      pointToLayer: this._makePointToLayer(false)
-    }).addTo(this);
+    options = options || {};
+    options.pointToLayer = this.pointToLayer.bind(this);
+    L.GeoJSON.prototype.initialize.call(this, undefined, options);
   },
 
   options: {
-    lang: 'en',
-    coats: 0,
-    thumbs: 0
+    url: undefined,
+    gsnamespace: 0,
+    icon: undefined,
+    thumbnailWidth: 300
   },
 
-  _makePointToLayer: function(icons) {
-    return function(feature, latlng) {
-      var icon = icons
-        ? getIcon(feature.properties.feature)
-        : getDivIcon(feature);
-      var marker = L.marker(latlng, {
-        icon: icon,
-        zIndexOffset: icons ? 0 : 100
+  pointToLayer: function(feature, latlng) {
+    var icon = L.icon(this.options.icon);
+    var marker = L.marker(latlng, {
+      icon: icon,
+      title: feature.properties.title
+    });
+    var popup = getPopupHtml(feature);
+    if (popup) {
+      marker.bindPopup(popup, {
+        minWidth: 200
       });
-      var popup = getPopupHtml(feature);
-      if (popup) {
-        marker.bindPopup(popup, {
-          minWidth: 200
-        });
-        marker.on('click', function() {
-          this.openPopup();
-          this.openedViaMouseOver = false;
-        });
-        marker.on('mouseover', function() {
-          this.openPopup();
-          this.openedViaMouseOver = true;
-        });
-        marker.on('mouseout', function() {
-          if (this.openedViaMouseOver) {
-            this.closePopup();
-          }
-        });
-      }
-      return marker;
-
-      function getPopupHtml(feature) {
-        var html;
-        if (feature.properties.title && feature.properties.wikipediaUrl) {
-          html = L.Util.template(
-            '<a href="{wikipediaUrl}">{title}</a>',
-            feature.properties
-          );
-          if (feature.properties.thumbnail) {
-            html =
-              html +
-              L.Util.template(
-                '<p><img src="{thumbnail}"></p>',
-                feature.properties
-              );
-          }
+      marker.on('click', function() {
+        this.openPopup();
+        this.openedViaMouseOver = false;
+      });
+      marker.on('mouseover', function() {
+        this.openPopup();
+        this.openedViaMouseOver = true;
+      });
+      marker.on('mouseout', function() {
+        if (this.openedViaMouseOver) {
+          this.closePopup();
         }
-        return html;
-      }
+      });
+    }
+    return marker;
 
-      function getDivIcon(feature) {
-        return L.divIcon({
-          iconSize: '',
-          iconAnchor: [-10, -5],
-          html: feature.properties.title
-        });
-      }
-
-      function getIcon(feature) {
-        var customIcon = getIconForFeature(feature);
-        if (customIcon) {
-          return L.divIcon({
-            className: customIcon,
-            iconSize: [24, 24],
-            iconAnchor: [12, -3]
-          });
+    function getPopupHtml(feature) {
+      var html;
+      if (feature.properties.title && feature.properties.wikipediaUrl) {
+        html = L.Util.template(
+          '<a href="{wikipediaUrl}" target="_blank">{title}</a>',
+          feature.properties
+        );
+        if (feature.properties.thumbnail) {
+          html =
+            html +
+            L.Util.template(
+              '<p><img src="{thumbnail}" width="{thumbnailWidth}"></p>',
+              feature.properties
+            );
         }
-        return new L.Icon.Default();
       }
-
-      function getIconForFeature(feature) {
-        var iconForFeature = {
-          country: 'maki-icon circle',
-          satellite: 'maki-icon rocket',
-          state: 'maki-icon circle',
-          adm1st: 'maki-icon circle',
-          adm2nd: 'maki-icon circle',
-          adm3rd: 'maki-icon circle',
-          city: 'maki-icon circle',
-          isle: 'maki-icon land-use',
-          mountain: 'maki-icon triangle',
-          river: 'maki-icon water',
-          waterbody: 'maki-icon water',
-          event: 'maki-icon theatre',
-          forest: 'maki-icon park',
-          glacier: 'maki-icon land-use',
-          airport: 'maki-icon airport',
-          railwaystation: 'maki-icon rail',
-          edu: 'maki-icon college',
-          pass: 'maki-icon golf',
-          landmark: 'maki-icon marker'
-        };
-        return feature && iconForFeature[feature];
-      }
-    };
+      return html;
+    }
   },
 
   updateMarks: function() {
     if (!this._map) {
       return;
     }
-    var url = 'https://tools.wmflabs.org/wp-world/marks-geojson.php';
+    var bounds = this._map.getBounds();
+    var url = this.options.url + '/w/api.php';
     url += L.Util.getParamString({
-      maxRows: 80,
-      LANG: this.options.lang,
-      coats: this.options.coats,
-      thumbs: this.options.thumbs,
-      bbox: this._map.getBounds().toBBoxString()
+      origin: '*',
+      format: 'json',
+      action: 'query',
+      list: 'geosearch',
+      gsnamespace: this.options.gsnamespace,
+      gslimit: 500,
+      gsprop: 'type|name',
+      gsbbox: [
+        bounds.getNorth(),
+        bounds.getWest(),
+        bounds.getSouth(),
+        bounds.getEast()
+      ].join('|')
     });
 
     var xhr = new XMLHttpRequest();
@@ -210,12 +166,40 @@ L.GeoJSON.WikipediaMarks = L.LayerGroup.extend({
     return this;
 
     function updateLayer() {
-      if (this.status !== 200 || !this.responseText) {
+      if (xhr.status !== 200 || !xhr.responseText) {
         return;
       }
-      var geojson = JSON.parse(this.responseText);
-      this.invoke('clearLayers');
-      this.invoke('addData', geojson);
+      var json = JSON.parse(xhr.responseText);
+      if (json.error || !json.query.geosearch) {
+        console.warn(json.error);
+        return;
+      }
+      var geojson = json.query.geosearch.map(toFeature, this);
+      this.clearLayers();
+      this.addData(geojson);
+    }
+
+    function toFeature(object) {
+      var thumbnail = object.title.match(/^File:/, '')
+        ? this.options.url +
+          '/wiki/Special:FilePath/' +
+          object.title.replace(/^File:/, '') +
+          '?width=' +
+          this.options.thumbnailWidth
+        : undefined;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [object.lon, object.lat]
+        },
+        properties: {
+          title: object.title,
+          wikipediaUrl: this.options.url + '/wiki/' + object.title,
+          thumbnailWidth: this.options.thumbnailWidth,
+          thumbnail: thumbnail
+        }
+      };
     }
   }
 });
