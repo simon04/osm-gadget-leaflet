@@ -3,7 +3,27 @@
 var query = getQuery();
 
 // Create a map
-var map = L.map('map').setView([47.3, 11.3], 9);
+var map = L.map('map');
+if (query.lat && query.lon) {
+  map.setView([query.lat, query.lon], query.zoom || 9);
+} else {
+  var center = window.localStorage
+    ? window.localStorage.getItem('mapCenter')
+    : undefined;
+  var init = false;
+  if (typeof center === 'string') {
+    try {
+      center = JSON.parse(center);
+      map.setView(center, center.zoom);
+      init = true;
+    } catch (e) {
+      // ignore
+    }
+  }
+  if (!init) {
+    map.setView({ lat: 47.3, lng: 11.3 }, 9);
+  }
+}
 
 // Prepare WIWOSM layer
 var wiwosm = new L.GeoJSON.WIWOSM({
@@ -66,6 +86,7 @@ window.addEventListener('hashchange', function() {
 });
 map.on('zoomend moveend', commons.updateMarks, commons);
 map.on('zoomend moveend', marks.updateMarks, marks);
+map.on('zoomend moveend', saveMapView, map);
 
 function getQuery() {
   var query_string = {};
@@ -88,4 +109,16 @@ function getQuery() {
     }
   }
   return query_string;
+}
+
+function saveMapView() {
+  if (!window.localStorage) {
+    return;
+  }
+  var mapCenter = {
+    lat: this.getCenter().lat,
+    lng: this.getCenter().lng,
+    zoom: this.getZoom()
+  };
+  window.localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
 }
