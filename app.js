@@ -4,6 +4,10 @@ var query = getQuery();
 
 // Create a map
 var map = L.map('map');
+map.attributionControl.setPrefix(
+  '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
+    '@simon04/osm-gadget-leaflet</a> (MIT)'
+);
 if (query.lat && query.lon) {
   map.setView([query.lat, query.lon], query.zoom || 9);
 } else {
