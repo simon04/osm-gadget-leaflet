@@ -182,9 +182,9 @@ L.GeoJSON.Geosearch = L.GeoJSON.extend({
     function toFeature(object) {
       var thumbnail = object.title.match(/^File:/, '')
         ? this.options.url +
-          '/wiki/Special:FilePath/' +
+          '/w/index.php?title=Special:Redirect/file/' +
           object.title.replace(/^File:/, '') +
-          '?width=' +
+          '&width=' +
           this.options.thumbnailWidth
         : undefined;
       return {
