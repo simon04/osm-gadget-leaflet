@@ -66,8 +66,8 @@ var layers = L.control
     },
     {
       WIWOSM: wiwosm.addTo(map),
-      'Commons World': commons.addTo(map),
-      'Wikipedia World': marks.addTo(map),
+      'Commons World': commons.addTo(map).updateMarks(),
+      'Wikipedia World': marks.addTo(map).updateMarks(),
       'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
     }
   )
