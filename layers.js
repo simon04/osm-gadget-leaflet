@@ -1,17 +1,5 @@
 'use strict';
 
-// fix for https://github.com/MazeMap/Leaflet.LayerGroup.Collision/pull/3
-L.GeoJSON.Collision.prototype.initialize = function(geojson, options) {
-  L.GeoJSON.prototype.initialize.call(this, geojson, options);
-  this._originalLayers = [];
-  this._visibleLayers = [];
-  this._staticLayers = [];
-  this._rbush = [];
-  this._cachedRelativeBoxes = [];
-  this._margin = options.margin || 0;
-  this._rbush = null;
-};
-
 L.TileLayer.Provider.providers.memomaps = {
   url: 'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
   options: {
