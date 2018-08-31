@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import 'leaflet-providers';
+import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
 
 L.TileLayer.Provider.providers.memomaps = {
   url: 'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
@@ -170,11 +171,7 @@ L.GeoJSON.Geosearch = L.GeoJSON.extend({
 
     function toFeature(object) {
       var thumbnail = object.title.match(/^File:/, '')
-        ? this.options.url +
-          '/w/index.php?title=Special:Redirect/file/' +
-          object.title.replace(/^File:/, '') +
-          '&width=' +
-          this.options.thumbnailWidth
+        ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
       return {
         type: 'Feature',
