@@ -1,4 +1,5 @@
-'use strict';
+import L from 'leaflet';
+import 'leaflet-providers';
 
 L.TileLayer.Provider.providers.memomaps = {
   url: 'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',

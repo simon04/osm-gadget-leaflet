@@ -4,11 +4,12 @@
   "plugins": [
     "prettier"
   ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
   "env": {
     "browser": true
-  },
-  "globals": {
-    "L": false
   },
   "rules": {
     "no-console": 0,
