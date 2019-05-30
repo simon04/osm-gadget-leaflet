@@ -1,20 +1,27 @@
 import L from 'leaflet';
+import 'leaflet.vectorgrid/dist/Leaflet.VectorGrid.js';
+import geojsonvt from 'geojson-vt';
 import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
 
-var renderer = L.GeoJSON.extend({
-  initialize: function(options) {
-    options = options || {};
-    options.pointToLayer = this.pointToLayer.bind(this);
-    L.GeoJSON.prototype.initialize.call(this, undefined, options);
-  },
-
+export default L.VectorGrid.extend({
   options: {
+    maxZoom: 19,
+    maxNativeZoom: 19,
+    interactive: true,
+    vectorTileLayerStyles: {},
     url: undefined,
     gsnamespace: 0,
     icon: undefined,
     thumbnailWidth: 300
   },
 
+  initialize: function(options) {
+    L.VectorGrid.prototype.initialize.call(this, options);
+    this.options.vectorTileLayerName = this.options.url;
+    this.options.vectorTileLayerStyles[this.options.vectorTileLayerName] = {
+      icon: L.icon(this.options.icon)
+    };
+  },
   pointToLayer: function(feature, latlng) {
     var icon = L.icon(this.options.icon);
     var marker = L.marker(latlng, {
@@ -60,41 +67,15 @@ var renderer = L.GeoJSON.extend({
       }
       return html;
     }
-  }
-});
-
-export default L.TileLayer.extend({
-  options: {
-    url: undefined,
-    gsnamespace: 0,
-    icon: undefined,
-    thumbnailWidth: 300
   },
-  initialize: function(options) {
-    this.renderingLayer = new L.GeoJSON();
-    L.TileLayer.GeoJSON.prototype.initialize.call(this, undefined, options);
-  },
-  onAdd: function(map) {
-    L.TileLayer.prototype.onAdd.call(this, map);
-    map.addLayer(this.renderingLayer);
-  },
-  onRemove: function(map) {
-    map.removeLayer(this.renderingLayer);
-    L.TileLayer.prototype.onRemove.call(this, map);
-  },
-  createTile: function(coords, done) {
+  _getVectorTilePromise: function(coords) {
     var url = this.getTileUrl(coords);
-    fetch(url)
+    return fetch(url)
       .then(function(response) {
         return response.json();
       })
-      .then(this._tileDataToGeoJSON.bind(this))
-      .then(
-        function(features) {
-          this.renderingLayer.addData(features);
-          done(null, document.createElement('div'));
-        }.bind(this)
-      );
+      .then(this._toGeoJSON.bind(this))
+      .then(this._toVectorTile.bind(this, coords));
   },
   getTileUrl: function(coords) {
     var bounds = this._tileCoordsToBounds(coords);
@@ -116,8 +97,8 @@ export default L.TileLayer.extend({
     });
     return url;
   },
-  _tileDataToGeoJSON: function(json) {
-    return json.query.geosearch.map(function toFeature(object) {
+  _toGeoJSON: function(json) {
+    var features = json.query.geosearch.map(function toFeature(object) {
       var thumbnail = object.title.match(/^File:/, '')
         ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
@@ -135,5 +116,27 @@ export default L.TileLayer.extend({
         }
       };
     }, this);
+    return {
+      type: 'FeatureCollection',
+      features: features
+    };
+  },
+  _toVectorTile: function(coords, geojson) {
+    var layerName = this.options.vectorTileLayerName;
+    var slicer = geojsonvt(geojson, {
+      maxZoom: this.options.maxNativeZoom || this.options.maxZoom
+    });
+    var slicedTileLayer = slicer.getTile(coords.z, coords.x, coords.y);
+    var tileLayers = {};
+    if (slicedTileLayer) {
+      var vectorTileLayer = {
+        features: slicedTileLayer.features,
+        extent: 4096,
+        name: layerName,
+        length: slicedTileLayer.features.length
+      };
+      tileLayers[layerName] = vectorTileLayer;
+    }
+    return { layers: tileLayers, coords: coords };
   }
 });

@@ -54,8 +54,8 @@ var layers = L.control
     },
     {
       WIWOSM: wiwosm.addTo(map),
-      'Commons World': commons.addTo(map).updateMarks(),
-      'Wikipedia World': marks.addTo(map).updateMarks(),
+      'Commons World': commons.addTo(map),
+      'Wikipedia World': marks.addTo(map),
       'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
     }
   )
@@ -76,6 +76,4 @@ window.addEventListener('hashchange', function() {
   L.setOptions(wiwosm, state.getQuery());
   wiwosm.loadWIWOSM();
 });
-map.on('zoomend moveend', commons.updateMarks, commons);
-map.on('zoomend moveend', marks.updateMarks, marks);
 map.on('zoomend moveend', state.saveMapView, map);
