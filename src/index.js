@@ -2,6 +2,7 @@
 
 import L from 'leaflet';
 import 'leaflet-providers';
+import 'leaflet-control-geocoder/src/index.js';
 
 import { default as Mediawiki } from './layer.mediawiki';
 import { default as WIWOSM } from './layer.wiwosm';
@@ -14,6 +15,7 @@ map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
     '@simon04/osm-gadget-leaflet</a> (MIT)'
 );
+L.Control.geocoder({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
 
 // Prepare WIWOSM layer

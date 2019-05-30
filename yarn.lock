@@ -520,6 +520,11 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
+leaflet-control-geocoder@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/leaflet-control-geocoder/-/leaflet-control-geocoder-1.7.0.tgz#939a790c80ff85c5a308a56a3c4cab2147da2862"
+  integrity sha512-AAdu+EdW7n0wfPIctRkpSrSFEekn7X8Iw/9xZQvfTw8NSMYcVOV5eC3nXK5tfaoHspaDEWTK4OQPhj3uXDLHAA==
+
 leaflet-providers@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/leaflet-providers/-/leaflet-providers-1.7.0.tgz#b462d6abba832b2e9f1cef6ca0ab3bf76a7ca9a9"
