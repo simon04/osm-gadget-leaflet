@@ -1,9 +1,7 @@
 {
   "root": true,
   "extends": "eslint:recommended",
-  "plugins": [
-    "prettier"
-  ],
+  "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module"
