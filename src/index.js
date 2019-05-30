@@ -1,7 +1,10 @@
 'use strict';
 
 import L from 'leaflet';
-import './layers';
+import 'leaflet-providers';
+
+import { default as Mediawiki } from './layer.mediawiki';
+import { default as WIWOSM } from './layer.wiwosm';
 import * as state from './state';
 var query = state.getQuery();
 
@@ -14,13 +17,13 @@ map.attributionControl.setPrefix(
 state.setMapView(map);
 
 // Prepare WIWOSM layer
-var wiwosm = new L.GeoJSON.WIWOSM({
+var wiwosm = new WIWOSM({
   article: query.article,
   lang: query.lang || 'en'
 });
 
 // Prepare marks layer
-var commons = new L.GeoJSON.Geosearch({
+var commons = new Mediawiki({
   url: 'https://commons.wikimedia.org',
   icon: {
     iconUrl:
@@ -29,7 +32,7 @@ var commons = new L.GeoJSON.Geosearch({
   },
   gsnamespace: 6
 });
-var marks = new L.GeoJSON.Geosearch({
+var marks = new Mediawiki({
   url: 'https://' + (query.lang || 'en') + '.wikipedia.org',
   icon: {
     iconUrl:
