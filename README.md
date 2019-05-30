@@ -13,5 +13,5 @@ Examples
 
 Building
 --------
-1. Run `npm install` to obtain the libraries
+1. Run `yarn` to obtain the libraries and build the project
 2. Open `index.html` in the browser and specify a query, e.g., `index.html#/?lang=en&article=Austria`
