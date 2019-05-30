@@ -45,7 +45,6 @@ var layers = L.control
       Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),
       OpenStreetMap: L.tileLayer.provider('OpenStreetMap'),
       HikeBike: L.tileLayer.provider('HikeBike'),
-      'Public Transport (ÖPNV)': L.tileLayer.provider('memomaps'),
       OpenTopoMap: L.tileLayer.provider('OpenTopoMap')
     },
     {

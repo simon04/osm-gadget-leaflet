@@ -2,13 +2,6 @@ import L from 'leaflet';
 import 'leaflet-providers';
 import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
 
-L.TileLayer.Provider.providers.memomaps = {
-  url: 'http://tile.memomaps.de/tilegen/{z}/{x}/{y}.png',
-  options: {
-    attribution: '{attribution.OpenStreetMap}'
-  }
-};
-
 L.GeoJSON.WIWOSM = L.GeoJSON.extend({
   initialize: function(options) {
     L.GeoJSON.prototype.initialize.call(this, undefined, options);
