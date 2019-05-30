@@ -1,7 +1,8 @@
 import L from 'leaflet';
+import 'leaflet-tilelayer-geojson';
 import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
 
-export default L.GeoJSON.extend({
+var xx = L.GeoJSON.extend({
   initialize: function(options) {
     options = options || {};
     options.pointToLayer = this.pointToLayer.bind(this);
@@ -122,5 +123,71 @@ export default L.GeoJSON.extend({
         }
       };
     }
+  }
+});
+
+export default L.TileLayer.GeoJSON.extend({
+  options: {
+    url: undefined,
+    gsnamespace: 0,
+    icon: undefined,
+    thumbnailWidth: 300
+  },
+  initialize: function(options) {
+    L.TileLayer.GeoJSON.prototype.initialize.call(this, undefined, options);
+  },
+  _loadTile: function(tile, tilePoint) {
+    var layer = this;
+    var req = new XMLHttpRequest();
+    this._requests.push(req);
+    req.onreadystatechange = this._xhrHandler(req, layer, tile, tilePoint);
+    req.open('GET', this.getTileUrl(tilePoint), true);
+    req.send();
+  },
+  getTileUrl: function(coords) {
+    var bounds = this._tileCoordsToBounds(coords);
+    var url = this.options.url + '/w/api.php';
+    url += L.Util.getParamString({
+      origin: '*',
+      format: 'json',
+      action: 'query',
+      list: 'geosearch',
+      gsnamespace: this.options.gsnamespace,
+      gslimit: 500,
+      gsprop: 'type|name',
+      gsbbox: [
+        bounds.getNorth(),
+        bounds.getWest(),
+        bounds.getSouth(),
+        bounds.getEast()
+      ].join('|')
+    });
+    return url;
+  },
+  _tileLoaded: function(tile, tilePoint) {
+    if (!tile.datum) return;
+    var geoJSON = this._tileDataToGeoJSON(tile.datum);
+    console.log(geoJSON)
+    this.addTileData(geoJSON, tilePoint);
+  },
+  _tileDataToGeoJSON: function(json) {
+    return json.query.geosearch.map(function toFeature(object) {
+      var thumbnail = object.title.match(/^File:/, '')
+        ? getFilePath(object.title, this.options.thumbnailWidth)
+        : undefined;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [object.lon, object.lat]
+        },
+        properties: {
+          title: object.title,
+          wikipediaUrl: this.options.url + '/wiki/' + object.title,
+          thumbnailWidth: this.options.thumbnailWidth,
+          thumbnail: thumbnail
+        }
+      };
+    }, this);
   }
 });
