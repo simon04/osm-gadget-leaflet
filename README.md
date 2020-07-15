@@ -6,9 +6,9 @@ This implementation is based on [LeafletJS](https://leafletjs.com/) and might, e
 
 ## Examples
 
-- https://tools.wmflabs.org/osm-gadget-leaflet/#/?lang=en&article=Austria
-- https://tools.wmflabs.org/osm-gadget-leaflet/#/?lang=wikidata&article=Q40
-- https://tools.wmflabs.org/osm-gadget-leaflet/#/?lang=wikidata&article=Q40&article=Q183
+- https://osm-gadget-leaflet.toolforge.org/#/?lang=en&article=Austria
+- https://osm-gadget-leaflet.toolforge.org/#/?lang=wikidata&article=Q40
+- https://osm-gadget-leaflet.toolforge.org/#/?lang=wikidata&article=Q40&article=Q183
 
 ## Building
 
