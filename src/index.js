@@ -1,8 +1,10 @@
 'use strict';
 
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import 'leaflet-providers';
 import 'leaflet-control-geocoder/src/index.js';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 import { default as Mediawiki } from './layer.mediawiki';
 import { default as WIWOSM } from './layer.wiwosm';
@@ -21,7 +23,7 @@ state.setMapView(map);
 // Prepare WIWOSM layer
 var wiwosm = new WIWOSM({
   article: query.article,
-  lang: query.lang || 'en'
+  lang: query.lang || 'en',
 });
 
 // Prepare marks layer
@@ -30,17 +32,17 @@ var commons = new Mediawiki({
   icon: {
     iconUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Commons-logo-2.svg/20px-Commons-logo-2.svg.png',
-    iconSize: [20, 27]
+    iconSize: [20, 27],
   },
-  gsnamespace: 6
+  gsnamespace: 6,
 });
 var marks = new Mediawiki({
   url: 'https://' + (query.lang || 'en') + '.wikipedia.org',
   icon: {
     iconUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/20px-Wikipedia-logo-v2.svg.png',
-    iconSize: [20, 18]
-  }
+    iconSize: [20, 18],
+  },
 });
 
 // Add layer switcher
@@ -50,13 +52,13 @@ var layers = L.control
       Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),
       OpenStreetMap: L.tileLayer.provider('OpenStreetMap'),
       HikeBike: L.tileLayer.provider('HikeBike'),
-      OpenTopoMap: L.tileLayer.provider('OpenTopoMap')
+      OpenTopoMap: L.tileLayer.provider('OpenTopoMap'),
     },
     {
       WIWOSM: wiwosm.addTo(map),
       'Commons World': commons.addTo(map).updateMarks(),
       'Wikipedia World': marks.addTo(map).updateMarks(),
-      'Hill Shading': L.tileLayer.provider('HikeBike.HillShading')
+      'Hill Shading': L.tileLayer.provider('HikeBike.HillShading'),
     }
   )
   .addTo(map);
@@ -72,7 +74,7 @@ if (query.lang === 'de') {
 L.control.scale().addTo(map);
 
 wiwosm.loadWIWOSM();
-window.addEventListener('hashchange', function() {
+window.addEventListener('hashchange', function () {
   L.setOptions(wiwosm, state.getQuery());
   wiwosm.loadWIWOSM();
 });

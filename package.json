@@ -4,11 +4,8 @@
   "description": "osm-gadget-leaflet",
   "main": "app.js",
   "scripts": {
-    "postinstall": "npm run build",
-    "build": "rollup -c",
-    "git-ls-files": "git ls-files '*.js' '*.json' '*.html' '*.md'",
-    "fix:style": "prettier --write $(npm run git-ls-files)",
-    "test": "eslint *.js && prettier --check $(npm run git-ls-files)"
+    "build": "esbuild --bundle src/index.js --outfile=dist/osm-gadget-leaflet.js --minify --sourcemap --external:images/geocoder.png --external:images/throbber.gif --external:images/layers.png --external:images/layers-2x.png --external:images/marker-icon.png",
+    "test": "echo No tests specified"
   },
   "repository": {
     "type": "git",
@@ -28,21 +25,13 @@
   },
   "homepage": "https://github.com/simon04/osm-gadget-leaflet#readme",
   "dependencies": {
-    "husky": "^2.3.0",
     "leaflet": "^1.5.1",
     "leaflet-control-geocoder": "^1.7.0",
     "leaflet-providers": "^1.7.0",
     "wikimedia-commons-file-path": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^5.3.0",
-    "eslint-plugin-prettier": "^2.6.2",
-    "prettier": "^1.17.1",
-    "rollup": "^0.65.0",
-    "rollup-plugin-commonjs": "^9.1.6",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "rollup-plugin-uglify": "^5.0.2",
-    "uglify-js": "^3.4.9"
+    "esbuild": "^0.7.15"
   },
   "prettier": {
     "singleQuote": true
