@@ -1,21 +1,30 @@
-import L from 'leaflet';
+import * as L from 'leaflet';
 import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
 
-export default L.GeoJSON.extend({
-  initialize: function(options) {
-    options = options || {};
-    options.pointToLayer = this.pointToLayer.bind(this);
-    L.GeoJSON.prototype.initialize.call(this, undefined, options);
-  },
+interface Options extends L.GeoJSONOptions {
+  url: string;
+  gsnamespace: number;
+  icon: L.IconOptions;
+  thumbnailWidth: number;
+}
 
-  options: {
+export default class MediaWiki extends L.GeoJSON {
+  constructor(options: Partial<Options>) {
+    super(undefined, options);
+    L.Util.setOptions(this, {
+      ...options,
+      pointToLayer: this.pointToLayer.bind(this),
+    });
+  }
+
+  options: Options = {
     url: undefined,
     gsnamespace: 0,
     icon: undefined,
     thumbnailWidth: 300
-  },
+  };
 
-  pointToLayer: function(feature, latlng) {
+  pointToLayer(feature: GeoJSON.Feature<GeoJSON.Point, any>, latlng: L.LatLng) {
     var icon = L.icon(this.options.icon);
     var marker = L.marker(latlng, {
       icon: icon,
@@ -42,7 +51,7 @@ export default L.GeoJSON.extend({
     }
     return marker;
 
-    function getPopupHtml(feature) {
+    function getPopupHtml(feature: GeoJSON.Feature) {
       var html;
       if (feature.properties.title && feature.properties.wikipediaUrl) {
         html = L.Util.template(
@@ -60,9 +69,9 @@ export default L.GeoJSON.extend({
       }
       return html;
     }
-  },
+  }
 
-  updateMarks: function() {
+  updateMarks() {
     if (!this._map) {
       return;
     }
@@ -104,8 +113,17 @@ export default L.GeoJSON.extend({
       this.addData(geojson);
     }
 
-    function toFeature(object) {
-      var thumbnail = object.title.match(/^File:/, '')
+    function toFeature(object: {
+      pageid: number;
+      ns: number;
+      title: string;
+      lat: number;
+      lon: number;
+      dist: number;
+      primary: string;
+      name: null;
+    }) {
+      var thumbnail = object.title.match(/^File:/)
         ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
       return {
@@ -123,4 +141,4 @@ export default L.GeoJSON.extend({
       };
     }
   }
-});
+}

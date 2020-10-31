@@ -1,24 +1,32 @@
-import L from 'leaflet';
+import * as L from 'leaflet';
 
-export default L.GeoJSON.extend({
-  initialize: function(options) {
-    L.GeoJSON.prototype.initialize.call(this, undefined, options);
-  },
+interface Options extends L.GeoJSONOptions {
+  article?: string | string[];
+  lang?: string;
+  coordsToLatLng(coords: L.LatLngTuple): L.LatLng;
+  pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng): L.CircleMarker<any>;
+}
 
-  options: {
-    coordsToLatLng: function(coords) {
+export default class WIWOSK extends L.GeoJSON {
+  options: Options = {
+    coordsToLatLng(coords: L.LatLngTuple) {
       // unproject EPSG:3857
       var pt = L.point(coords[0], coords[1]);
       var ll = L.Projection.SphericalMercator.unproject(pt);
       return ll;
     },
 
-    pointToLayer: function(feature, latlng) {
+    pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng) {
       return L.circleMarker(latlng);
     }
-  },
+  };
 
-  loadWIWOSM: function() {
+  constructor(options: Partial<Options>) {
+    super(undefined, options);
+    L.Util.setOptions(this, options);
+  }
+
+  loadWIWOSM() {
     var me = this;
     if (!this.options.article || !this.options.lang) {
       return;
@@ -31,7 +39,7 @@ export default L.GeoJSON.extend({
     }
     return this;
 
-    function loadArticle(article) {
+    function loadArticle(article: string) {
       var url = 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php';
       url += L.Util.getParamString({
         lang: me.options.lang,
@@ -55,4 +63,4 @@ export default L.GeoJSON.extend({
       me._map.fitBounds(me.getBounds());
     }
   }
-});
+}

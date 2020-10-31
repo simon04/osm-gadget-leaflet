@@ -2,9 +2,9 @@
   "name": "osm-gadget-leaflet",
   "version": "0.0.0",
   "description": "osm-gadget-leaflet",
-  "main": "app.js",
+  "main": "src/index.ts",
   "scripts": {
-    "build": "esbuild --bundle src/index.js --outfile=dist/osm-gadget-leaflet.js --minify --sourcemap --external:images/geocoder.png --external:images/throbber.gif --external:images/layers.png --external:images/layers-2x.png --external:images/marker-icon.png",
+    "build": "esbuild --bundle src/index.ts --outfile=dist/osm-gadget-leaflet.js --minify --sourcemap --external:images/geocoder.png --external:images/throbber.gif --external:images/layers.png --external:images/layers-2x.png --external:images/marker-icon.png",
     "test": "echo No tests specified"
   },
   "repository": {
@@ -31,6 +31,8 @@
     "wikimedia-commons-file-path": "^1.2.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.5.19",
+    "@types/leaflet-providers": "^1.2.0",
     "esbuild": "^0.7.15"
   },
   "prettier": {

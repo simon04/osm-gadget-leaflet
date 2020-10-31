@@ -1,6 +1,6 @@
 'use strict';
 
-import L from 'leaflet';
+import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-providers';
 import 'leaflet-control-geocoder/src/index.js';
@@ -17,13 +17,13 @@ map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
     '@simon04/osm-gadget-leaflet</a> (MIT)'
 );
-L.Control.geocoder({ position: 'topleft' }).addTo(map);
+(L.Control as any).geocoder({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
 
 // Prepare WIWOSM layer
 var wiwosm = new WIWOSM({
-  article: query.article,
-  lang: query.lang || 'en',
+  article: query.get('article'),
+  lang: query.get('lang') || 'en',
 });
 
 // Prepare marks layer
@@ -37,7 +37,7 @@ var commons = new Mediawiki({
   gsnamespace: 6,
 });
 var marks = new Mediawiki({
-  url: 'https://' + (query.lang || 'en') + '.wikipedia.org',
+  url: 'https://' + (query.get('lang') || 'en') + '.wikipedia.org',
   icon: {
     iconUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/20px-Wikipedia-logo-v2.svg.png',
@@ -63,7 +63,7 @@ var layers = L.control
   )
   .addTo(map);
 
-if (query.lang === 'de') {
+if (query.get('lang') === 'de') {
   layers.addBaseLayer(
     L.tileLayer.provider('OpenStreetMap.DE'),
     'OpenStreetMap.de'
@@ -75,7 +75,7 @@ L.control.scale().addTo(map);
 
 wiwosm.loadWIWOSM();
 window.addEventListener('hashchange', function () {
-  L.setOptions(wiwosm, state.getQuery());
+  L.Util.setOptions(wiwosm, state.getQuery());
   wiwosm.loadWIWOSM();
 });
 map.on('zoomend moveend', commons.updateMarks, commons);
