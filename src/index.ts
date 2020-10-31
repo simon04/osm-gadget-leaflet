@@ -9,25 +9,26 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import { default as Mediawiki } from './layer.mediawiki';
 import { default as WIWOSM } from './layer.wiwosm';
 import * as state from './state';
-var query = state.getQuery();
+const query = state.getQuery();
 
 // Create a map
-var map = L.map('map');
+const map = L.map('map');
 map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
     '@simon04/osm-gadget-leaflet</a> (MIT)'
 );
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (L.Control as any).geocoder({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
 
 // Prepare WIWOSM layer
-var wiwosm = new WIWOSM({
+const wiwosm = new WIWOSM({
   article: query.get('article'),
   lang: query.get('lang') || 'en',
 });
 
 // Prepare marks layer
-var commons = new Mediawiki({
+const commons = new Mediawiki({
   url: 'https://commons.wikimedia.org',
   icon: {
     iconUrl:
@@ -36,7 +37,7 @@ var commons = new Mediawiki({
   },
   gsnamespace: 6,
 });
-var marks = new Mediawiki({
+const marks = new Mediawiki({
   url: 'https://' + (query.get('lang') || 'en') + '.wikipedia.org',
   icon: {
     iconUrl:
@@ -46,7 +47,7 @@ var marks = new Mediawiki({
 });
 
 // Add layer switcher
-var layers = L.control
+const layers = L.control
   .layers(
     {
       Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),

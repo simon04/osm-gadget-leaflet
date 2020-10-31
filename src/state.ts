@@ -1,24 +1,24 @@
 import { Map } from 'leaflet';
 
-export function getQuery() {
+export function getQuery(): URLSearchParams {
   return new URLSearchParams((location.hash || '').substring(2));
 }
 
-export function setMapView(map: Map) {
-  var query = getQuery();
+export function setMapView(map: Map): void {
+  const query = getQuery();
   if (query.has('lat') && query.has('lon')) {
     map.setView(
       [+query.get('lat'), +query.get('lon')],
       +query.get('zoom') || 9
     );
   } else {
-    var centerString = window.localStorage
+    const centerString = window.localStorage
       ? window.localStorage.getItem('mapCenter')
       : undefined;
-    var init = false;
+    let init = false;
     if (typeof centerString === 'string') {
       try {
-        var center = JSON.parse(centerString);
+        const center = JSON.parse(centerString);
         map.setView(center, center.zoom);
         init = true;
       } catch (e) {
@@ -31,11 +31,11 @@ export function setMapView(map: Map) {
   }
 }
 
-export function saveMapView() {
+export function saveMapView(): void {
   if (!window.localStorage) {
     return;
   }
-  var mapCenter = {
+  const mapCenter = {
     lat: this.getCenter().lat,
     lng: this.getCenter().lng,
     zoom: this.getZoom(),

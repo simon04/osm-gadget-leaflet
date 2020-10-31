@@ -8,6 +8,13 @@ interface Options extends L.GeoJSONOptions {
   thumbnailWidth: number;
 }
 
+interface FeatureProperties {
+  title: string;
+  wikipediaUrl: string;
+  thumbnailWidth: number;
+  thumbnail?: string;
+}
+
 export default class MediaWiki extends L.GeoJSON {
   constructor(options: Partial<Options>) {
     super(undefined, options);
@@ -24,13 +31,16 @@ export default class MediaWiki extends L.GeoJSON {
     thumbnailWidth: 300
   };
 
-  pointToLayer(feature: GeoJSON.Feature<GeoJSON.Point, any>, latlng: L.LatLng) {
-    var icon = L.icon(this.options.icon);
-    var marker = L.marker(latlng, {
+  pointToLayer(
+    feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
+    latlng: L.LatLng
+  ): L.Marker {
+    const icon = L.icon(this.options.icon);
+    const marker = L.marker(latlng, {
       icon: icon,
       title: feature.properties.title
     });
-    var popup = getPopupHtml(feature);
+    const popup = getPopupHtml(feature);
     if (popup) {
       marker.bindPopup(popup, {
         minWidth: 200
@@ -52,31 +62,29 @@ export default class MediaWiki extends L.GeoJSON {
     return marker;
 
     function getPopupHtml(feature: GeoJSON.Feature) {
-      var html;
+      let html;
       if (feature.properties.title && feature.properties.wikipediaUrl) {
         html = L.Util.template(
           '<a href="{wikipediaUrl}" target="_blank">{title}</a>',
           feature.properties
         );
         if (feature.properties.thumbnail) {
-          html =
-            html +
-            L.Util.template(
-              '<p><img src="{thumbnail}" width="{thumbnailWidth}"></p>',
-              feature.properties
-            );
+          html += L.Util.template(
+            '<p><img src="{thumbnail}" width="{thumbnailWidth}"></p>',
+            feature.properties
+          );
         }
       }
       return html;
     }
   }
 
-  updateMarks() {
+  updateMarks(): this {
     if (!this._map) {
       return;
     }
-    var bounds = this._map.getBounds();
-    var url = this.options.url + '/w/api.php';
+    const bounds = this._map.getBounds();
+    let url = this.options.url + '/w/api.php';
     url += L.Util.getParamString({
       origin: '*',
       format: 'json',
@@ -93,7 +101,7 @@ export default class MediaWiki extends L.GeoJSON {
       ].join('|')
     });
 
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', updateLayer.bind(this));
     xhr.open('GET', url);
     xhr.send();
@@ -103,12 +111,12 @@ export default class MediaWiki extends L.GeoJSON {
       if (xhr.status !== 200 || !xhr.responseText) {
         return;
       }
-      var json = JSON.parse(xhr.responseText);
+      const json = JSON.parse(xhr.responseText);
       if (json.error || !json.query.geosearch) {
         console.warn(json.error);
         return;
       }
-      var geojson = json.query.geosearch.map(toFeature, this);
+      const geojson = json.query.geosearch.map(toFeature, this);
       this.clearLayers();
       this.addData(geojson);
     }
@@ -123,7 +131,7 @@ export default class MediaWiki extends L.GeoJSON {
       primary: string;
       name: null;
     }) {
-      var thumbnail = object.title.match(/^File:/)
+      const thumbnail: string = object.title.match(/^File:/)
         ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
       return {
@@ -137,7 +145,7 @@ export default class MediaWiki extends L.GeoJSON {
           wikipediaUrl: this.options.url + '/wiki/' + object.title,
           thumbnailWidth: this.options.thumbnailWidth,
           thumbnail: thumbnail
-        }
+        } as FeatureProperties
       };
     }
   }

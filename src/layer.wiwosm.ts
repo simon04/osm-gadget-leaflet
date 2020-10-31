@@ -4,15 +4,15 @@ interface Options extends L.GeoJSONOptions {
   article?: string | string[];
   lang?: string;
   coordsToLatLng(coords: L.LatLngTuple): L.LatLng;
-  pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng): L.CircleMarker<any>;
+  pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng): L.CircleMarker;
 }
 
 export default class WIWOSK extends L.GeoJSON {
   options: Options = {
     coordsToLatLng(coords: L.LatLngTuple) {
       // unproject EPSG:3857
-      var pt = L.point(coords[0], coords[1]);
-      var ll = L.Projection.SphericalMercator.unproject(pt);
+      const pt = L.point(coords[0], coords[1]);
+      const ll = L.Projection.SphericalMercator.unproject(pt);
       return ll;
     },
 
@@ -26,41 +26,38 @@ export default class WIWOSK extends L.GeoJSON {
     L.Util.setOptions(this, options);
   }
 
-  loadWIWOSM() {
-    var me = this;
+  loadWIWOSM(): this {
     if (!this.options.article || !this.options.lang) {
       return;
     } else if (typeof this.options.article === 'object') {
       this.clearLayers();
-      this.options.article.map(loadArticle);
+      this.options.article.map(a => this.loadArticle(a));
     } else {
-      var doClear = true;
-      loadArticle(this.options.article);
+      this.loadArticle(this.options.article, true);
     }
     return this;
+  }
 
-    function loadArticle(article: string) {
-      var url = 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php';
-      url += L.Util.getParamString({
-        lang: me.options.lang,
-        article: article
-      });
-      var xhr = new XMLHttpRequest();
-      xhr.addEventListener('load', addData);
-      xhr.open('GET', url);
-      xhr.send();
-    }
-
-    function addData() {
-      if (this.status !== 200 || !this.responseText) {
+  private loadArticle(article: string, doClear = false) {
+    let url = 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php';
+    url += L.Util.getParamString({
+      lang: this.options.lang,
+      article: article
+    });
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', () => {
+      if (xhr.status !== 200 || !xhr.responseText) {
         return;
       }
-      var geojson = JSON.parse(this.responseText);
+      const geojson = JSON.parse(xhr.responseText);
       if (doClear) {
-        me.clearLayers();
+        this.clearLayers();
       }
-      me.addData(geojson);
-      me._map.fitBounds(me.getBounds());
-    }
+      this.addData(geojson);
+      this._map.fitBounds(this.getBounds());
+
+    });
+    xhr.open('GET', url);
+    xhr.send();
   }
 }
