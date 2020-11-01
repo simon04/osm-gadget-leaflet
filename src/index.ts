@@ -47,13 +47,25 @@ const marks = new Mediawiki({
 });
 
 // Add layer switcher
+const maxZoom = 24;
 const layers = L.control
   .layers(
     {
-      Wikimedia: L.tileLayer.provider('Wikimedia').addTo(map),
-      OpenStreetMap: L.tileLayer.provider('OpenStreetMap'),
+      Wikimedia: L.tileLayer
+        .provider('Wikimedia', {
+          maxNativeZoom: 19,
+          maxZoom,
+        })
+        .addTo(map),
+      OpenStreetMap: L.tileLayer.provider('OpenStreetMap', {
+        maxNativeZoom: 19,
+        maxZoom,
+      }),
       HikeBike: L.tileLayer.provider('HikeBike'),
-      OpenTopoMap: L.tileLayer.provider('OpenTopoMap'),
+      OpenTopoMap: L.tileLayer.provider('OpenTopoMap', {
+        maxNativeZoom: 17,
+        maxZoom,
+      }),
     },
     {
       WIWOSM: wiwosm.addTo(map),
