@@ -3,7 +3,7 @@
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-providers';
-import 'leaflet-control-geocoder/src/index.js';
+import { Geocoder as GeocoderControl } from 'leaflet-control-geocoder/src/control.js';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 import './style.css';
@@ -18,8 +18,7 @@ map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
     '@simon04/osm-gadget-leaflet</a> (GPL v3)'
 );
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(L.Control as any).geocoder({ position: 'topleft' }).addTo(map);
+new GeocoderControl({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
 
 // Prepare WIWOSM layer
