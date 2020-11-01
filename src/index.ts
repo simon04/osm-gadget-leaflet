@@ -6,6 +6,7 @@ import 'leaflet-providers';
 import 'leaflet-control-geocoder/src/index.js';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
+import './style.css';
 import { default as Mediawiki } from './layer.mediawiki';
 import { default as WIWOSM } from './layer.wiwosm';
 import * as state from './state';
