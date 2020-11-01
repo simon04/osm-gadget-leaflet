@@ -15,7 +15,7 @@ const query = state.getQuery();
 const map = L.map('map');
 map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
-    '@simon04/osm-gadget-leaflet</a> (MIT)'
+    '@simon04/osm-gadget-leaflet</a> (GPL v3)'
 );
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (L.Control as any).geocoder({ position: 'topleft' }).addTo(map);

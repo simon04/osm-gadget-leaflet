@@ -20,7 +20,7 @@
     "osm-gadget"
   ],
   "author": "Simon Legner <Simon.Legner@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/simon04/osm-gadget-leaflet/issues"
   },
