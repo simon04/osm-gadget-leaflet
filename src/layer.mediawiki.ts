@@ -73,7 +73,9 @@ export default class MediaWiki extends L.GeoJSON {
     }
     return marker;
 
-    function getPopupHtml(feature: GeoJSON.Feature) {
+    function getPopupHtml(
+      feature: GeoJSON.Feature<GeoJSON.Geometry, FeatureProperties>
+    ) {
       let html;
       if (feature.properties.title && feature.properties.wikipediaUrl) {
         html = L.Util.template(
@@ -128,12 +130,15 @@ export default class MediaWiki extends L.GeoJSON {
         console.warn(json.error);
         return;
       }
-      const geojson = json.query.geosearch.map(toFeature, this);
+      const geosearch = json.query.geosearch as GeosearchFeature[];
+      const geojson = geosearch.map(toFeature, this);
       this.clearLayers();
       this.addData(geojson);
     }
 
-    function toFeature(object: GeosearchFeature) {
+    function toFeature(
+      object: GeosearchFeature
+    ): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> {
       const thumbnail: string = object.title.match(/^File:/)
         ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
@@ -148,7 +153,7 @@ export default class MediaWiki extends L.GeoJSON {
           wikipediaUrl: this.options.url + '/wiki/' + object.title,
           thumbnailWidth: this.options.thumbnailWidth,
           thumbnail: thumbnail,
-        } as FeatureProperties,
+        },
       };
     }
   }
