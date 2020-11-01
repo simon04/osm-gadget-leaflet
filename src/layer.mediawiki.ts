@@ -8,6 +8,18 @@ interface Options extends L.GeoJSONOptions {
   thumbnailWidth: number;
 }
 
+export interface GeosearchFeature {
+  pageid: number;
+  ns: number;
+  title: string;
+  lat: number;
+  lon: number;
+  dist: number;
+  primary: string;
+  type: 'camera';
+  name: null;
+}
+
 interface FeatureProperties {
   title: string;
   wikipediaUrl: string;
@@ -121,16 +133,7 @@ export default class MediaWiki extends L.GeoJSON {
       this.addData(geojson);
     }
 
-    function toFeature(object: {
-      pageid: number;
-      ns: number;
-      title: string;
-      lat: number;
-      lon: number;
-      dist: number;
-      primary: string;
-      name: null;
-    }) {
+    function toFeature(object: GeosearchFeature) {
       const thumbnail: string = object.title.match(/^File:/)
         ? getFilePath(object.title, this.options.thumbnailWidth)
         : undefined;
