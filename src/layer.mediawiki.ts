@@ -5,6 +5,7 @@ interface Options extends L.GeoJSONOptions {
   url: string;
   gsnamespace: number;
   icon: L.IconOptions;
+  iconThumbnail: boolean;
   thumbnailWidth: number;
 }
 
@@ -23,8 +24,7 @@ export interface GeosearchFeature {
 interface FeatureProperties {
   title: string;
   wikipediaUrl: string;
-  thumbnailWidth: number;
-  thumbnail?: string;
+  thumbnail?: (width: number) => string;
 }
 
 export default class MediaWiki extends L.GeoJSON {
@@ -32,27 +32,79 @@ export default class MediaWiki extends L.GeoJSON {
     super(undefined, options);
     L.Util.setOptions(this, {
       ...options,
-      pointToLayer: this.pointToLayer.bind(this),
+      pointToLayer: options.iconThumbnail
+        ? this.pointToThumbnailLayer.bind(this)
+        : this.pointToIconLayer.bind(this),
     });
+    if (!this.options.iconThumbnail && !this.options.icon) {
+      throw new Error('Either iconThumbnail or icon is needed!');
+    }
+    console.log(this.options.pointToLayer);
   }
 
   options: Options = {
     url: undefined,
     gsnamespace: 0,
     icon: undefined,
-    thumbnailWidth: 300,
+    iconThumbnail: false,
+    thumbnailWidth: 320,
   };
 
-  pointToLayer(
+  onAdd(map: L.Map): this {
+    super.onAdd(map);
+    map.on('zoomend moveend', this.updateMarks, this);
+    this.updateMarks();
+    return this;
+  }
+  onRemove(map: L.Map): this {
+    super.onRemove(map);
+    map.off('zoomend moveend', this.updateMarks, this);
+    return this;
+  }
+
+  pointToThumbnailLayer(
     feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
     latlng: L.LatLng
   ): L.Marker {
+    const zoom = this._map.getZoom();
+    const width = zoom > 20 ? 320 : zoom > 18 ? 240 : zoom > 16 ? 120 : 60;
+    const iconUrl = feature.properties.thumbnail(320);
+    if (!iconUrl) return;
+    const icon = L.icon({
+      iconUrl,
+      iconAnchor: [width / 2, 0],
+      iconSize: [width, undefined],
+    });
+    const marker = L.marker(latlng, {
+      icon: icon,
+      title: feature.properties.title,
+    });
+    if (feature.properties.wikipediaUrl) {
+      marker.on('click', () => window.open(feature.properties.wikipediaUrl));
+      marker.on('mouseover', (event) => {
+        const icon = event.target._icon as HTMLImageElement;
+        icon.setAttribute('zIndexOld', icon.style.zIndex);
+        icon.style.zIndex = '987654';
+      });
+      marker.on('mouseout', (event) => {
+        const icon = event.target._icon as HTMLImageElement;
+        icon.style.zIndex = icon.getAttribute('zIndexOld');
+      });
+    }
+    return marker;
+  }
+
+  pointToIconLayer(
+    feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
+    latlng: L.LatLng
+  ): L.Marker {
+    console.trace();
     const icon = L.icon(this.options.icon);
     const marker = L.marker(latlng, {
       icon: icon,
       title: feature.properties.title,
     });
-    const popup = getPopupHtml(feature);
+    const popup = getPopupHtml.call(this, feature);
     if (popup) {
       marker.bindPopup(popup, {
         minWidth: 200,
@@ -83,9 +135,11 @@ export default class MediaWiki extends L.GeoJSON {
           feature.properties
         );
         if (feature.properties.thumbnail) {
+          const { thumbnailWidth } = this.options;
+          const thumbnail = feature.properties.thumbnail(thumbnailWidth);
           html += L.Util.template(
             '<p><img src="{thumbnail}" width="{thumbnailWidth}"></p>',
-            feature.properties
+            { thumbnail, thumbnailWidth }
           );
         }
       }
@@ -139,9 +193,6 @@ export default class MediaWiki extends L.GeoJSON {
     function toFeature(
       object: GeosearchFeature
     ): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> {
-      const thumbnail: string = object.title.match(/^File:/)
-        ? getFilePath(object.title, this.options.thumbnailWidth)
-        : undefined;
       return {
         type: 'Feature',
         geometry: {
@@ -151,8 +202,9 @@ export default class MediaWiki extends L.GeoJSON {
         properties: {
           title: object.title,
           wikipediaUrl: this.options.url + '/wiki/' + object.title,
-          thumbnailWidth: this.options.thumbnailWidth,
-          thumbnail: thumbnail,
+          thumbnail: object.title.match(/^File:/)
+            ? (width) => getFilePath(object.title, width)
+            : undefined,
         },
       };
     }

@@ -29,6 +29,11 @@ const wiwosm = new WIWOSM({
 });
 
 // Prepare marks layer
+const commonsThumbnails = new Mediawiki({
+  url: 'https://commons.wikimedia.org',
+  iconThumbnail: true,
+  gsnamespace: 6,
+});
 const commons = new Mediawiki({
   url: 'https://commons.wikimedia.org',
   icon: {
@@ -70,7 +75,8 @@ const layers = L.control
     },
     {
       WIWOSM: wiwosm.addTo(map),
-      'Commons World': commons.addTo(map).updateMarks(),
+      'Commons World 🖼': commonsThumbnails.addTo(map),
+      'Commons World': commons,
       'Wikipedia World': marks.addTo(map).updateMarks(),
       'Hill Shading': L.tileLayer.provider('HikeBike.HillShading'),
     }
@@ -92,6 +98,5 @@ window.addEventListener('hashchange', function () {
   L.Util.setOptions(wiwosm, state.getQuery());
   wiwosm.loadWIWOSM();
 });
-map.on('zoomend moveend', commons.updateMarks, commons);
 map.on('zoomend moveend', marks.updateMarks, marks);
 map.on('zoomend moveend', state.saveMapView, map);

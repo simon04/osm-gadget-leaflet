@@ -4,3 +4,17 @@ body,
   margin: 0px;
   height: 100%;
 }
+
+.leaflet-marker-icon {
+  transition-duration: 0.1s;
+  transition-property: all;
+  border: 1px solid transparent;
+  box-shadow: none;
+  filter: grayscale(0.5);
+}
+.leaflet-marker-icon:hover {
+  z-index: 987654;
+  border: 1px solid rgba(0, 0, 0, 50%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 50%);
+  filter: none;
+}
