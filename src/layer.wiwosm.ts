@@ -18,7 +18,7 @@ export default class WIWOSK extends L.GeoJSON {
 
     pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng) {
       return L.circleMarker(latlng);
-    }
+    },
   };
 
   constructor(options: Partial<Options>) {
@@ -31,7 +31,7 @@ export default class WIWOSK extends L.GeoJSON {
       return;
     } else if (typeof this.options.article === 'object') {
       this.clearLayers();
-      this.options.article.map(a => this.loadArticle(a));
+      this.options.article.map((a) => this.loadArticle(a));
     } else {
       this.loadArticle(this.options.article, true);
     }
@@ -42,7 +42,7 @@ export default class WIWOSK extends L.GeoJSON {
     let url = 'https://tools.wmflabs.org/wiwosm/osmjson/getGeoJSON.php';
     url += L.Util.getParamString({
       lang: this.options.lang,
-      article: article
+      article: article,
     });
     const xhr = new XMLHttpRequest();
     xhr.addEventListener('load', () => {
@@ -55,7 +55,6 @@ export default class WIWOSK extends L.GeoJSON {
       }
       this.addData(geojson);
       this._map.fitBounds(this.getBounds());
-
     });
     xhr.open('GET', url);
     xhr.send();

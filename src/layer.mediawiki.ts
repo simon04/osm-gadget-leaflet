@@ -40,7 +40,7 @@ export default class MediaWiki extends L.GeoJSON {
     url: undefined,
     gsnamespace: 0,
     icon: undefined,
-    thumbnailWidth: 300
+    thumbnailWidth: 300,
   };
 
   pointToLayer(
@@ -50,22 +50,22 @@ export default class MediaWiki extends L.GeoJSON {
     const icon = L.icon(this.options.icon);
     const marker = L.marker(latlng, {
       icon: icon,
-      title: feature.properties.title
+      title: feature.properties.title,
     });
     const popup = getPopupHtml(feature);
     if (popup) {
       marker.bindPopup(popup, {
-        minWidth: 200
+        minWidth: 200,
       });
-      marker.on('click', function() {
+      marker.on('click', function () {
         this.openPopup();
         this.openedViaMouseOver = false;
       });
-      marker.on('mouseover', function() {
+      marker.on('mouseover', function () {
         this.openPopup();
         this.openedViaMouseOver = true;
       });
-      marker.on('mouseout', function() {
+      marker.on('mouseout', function () {
         if (this.openedViaMouseOver) {
           this.closePopup();
         }
@@ -109,8 +109,8 @@ export default class MediaWiki extends L.GeoJSON {
         bounds.getNorth(),
         bounds.getWest(),
         bounds.getSouth(),
-        bounds.getEast()
-      ].join('|')
+        bounds.getEast(),
+      ].join('|'),
     });
 
     const xhr = new XMLHttpRequest();
@@ -141,14 +141,14 @@ export default class MediaWiki extends L.GeoJSON {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [object.lon, object.lat]
+          coordinates: [object.lon, object.lat],
         },
         properties: {
           title: object.title,
           wikipediaUrl: this.options.url + '/wiki/' + object.title,
           thumbnailWidth: this.options.thumbnailWidth,
-          thumbnail: thumbnail
-        } as FeatureProperties
+          thumbnail: thumbnail,
+        } as FeatureProperties,
       };
     }
   }
