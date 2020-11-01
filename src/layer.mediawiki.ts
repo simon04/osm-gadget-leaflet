@@ -39,7 +39,6 @@ export default class MediaWiki extends L.GeoJSON {
     if (!this.options.iconThumbnail && !this.options.icon) {
       throw new Error('Either iconThumbnail or icon is needed!');
     }
-    console.log(this.options.pointToLayer);
   }
 
   options: Options = {
@@ -98,7 +97,6 @@ export default class MediaWiki extends L.GeoJSON {
     feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
     latlng: L.LatLng
   ): L.Marker {
-    console.trace();
     const icon = L.icon(this.options.icon);
     const marker = L.marker(latlng, {
       icon: icon,
