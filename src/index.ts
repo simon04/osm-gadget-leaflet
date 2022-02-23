@@ -12,6 +12,16 @@ import { default as WIWOSM } from './layer.wiwosm';
 import * as state from './state';
 const query = state.getQuery();
 
+// https://github.com/Leaflet/Leaflet/issues/4968#issuecomment-269750768
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
+
 // Create a map
 const map = L.map('map');
 map.attributionControl.setPrefix(
