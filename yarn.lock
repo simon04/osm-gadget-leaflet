@@ -1078,10 +1078,10 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-wikimedia-commons-file-path@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/wikimedia-commons-file-path/-/wikimedia-commons-file-path-1.2.0.tgz#5331a430629700012203efeee3572270b280e525"
-  integrity sha512-nUFMGHmZIUiat6YcX82SIUf7NRzYFCVw8UZSfH0XcUm+BF6+i8POj9C1idMj4OPTgc6ZtGhElDCS0ovphJXGaw==
+wikimedia-commons-file-path@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/wikimedia-commons-file-path/-/wikimedia-commons-file-path-2.1.1.tgz#d3a47b0aa9590438d7fda0a48818977039d16928"
+  integrity sha512-cbf49nrvqa6/EArlAgQKRsMK4aYhCfSiLf6yCl8M+GitH+/qaj83w9veaCwFvAaFzB1NC6v3m64rIYsOdx4Rvw==
   dependencies:
     blueimp-md5 "^2.10.0"
 
