@@ -2,7 +2,6 @@
 
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet-providers';
 import { Geocoder as GeocoderControl } from 'leaflet-control-geocoder/src/control.js';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
@@ -66,20 +65,21 @@ const maxZoom = 24;
 const layers = L.control
   .layers(
     {
-      Wikimedia: L.tileLayer
-        .provider('Wikimedia', {
+      Wikimedia: L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
           maxNativeZoom: 19,
           maxZoom,
+          attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
         })
         .addTo(map),
-      OpenStreetMap: L.tileLayer.provider('OpenStreetMap', {
+      OpenStreetMap: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxNativeZoom: 19,
         maxZoom,
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }),
-      HikeBike: L.tileLayer.provider('HikeBike'),
-      OpenTopoMap: L.tileLayer.provider('OpenTopoMap', {
+      OpenTopoMap: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxNativeZoom: 17,
         maxZoom,
+        attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>), <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }),
     },
     {
@@ -87,14 +87,17 @@ const layers = L.control
       'Commons World 🖼': commonsThumbnails.addTo(map),
       'Commons World': commons,
       'Wikipedia World': marks.addTo(map).updateMarks(),
-      'Hill Shading': L.tileLayer.provider('HikeBike.HillShading'),
     }
   )
   .addTo(map);
 
 if (query.get('lang') === 'de') {
   layers.addBaseLayer(
-    L.tileLayer.provider('OpenStreetMap.DE'),
+    L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
+      maxNativeZoom: 18,
+      maxZoom,
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }),
     'OpenStreetMap.de'
   );
 }
