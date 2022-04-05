@@ -2,7 +2,7 @@
 
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Geocoder as GeocoderControl } from 'leaflet-control-geocoder/src/control.js';
+import { Geocoder as GeocoderControl } from 'leaflet-control-geocoder';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 import './style.css';
@@ -15,6 +15,7 @@ const query = state.getQuery();
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl,
   iconUrl,
