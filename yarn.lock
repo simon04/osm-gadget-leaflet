@@ -764,10 +764,10 @@ leaflet-control-geocoder@^2.4.0:
   optionalDependencies:
     open-location-code "^1.0.0"
 
-leaflet@^1.8.0-beta.3:
-  version "1.8.0-beta.3"
-  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.8.0-beta.3.tgz#ad4315404912b23772497408c1dcfaa9832b8ff4"
-  integrity sha512-5rp3xGRS1yxwxV2wnezsNr8pKHYjuki8fa9j2u3vJn0uzd1OaCKz5IwoFRFC6DODQ/iDtao54Bn76cRLH78XjA==
+leaflet@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.8.0.tgz#4615db4a22a304e8e692cae9270b983b38a2055e"
+  integrity sha512-gwhMjFCQiYs3x/Sf+d49f10ERXaEFCPr+nVTryhAW8DWbMGqJqt9G4XuIaHmFW08zYvhgdzqXGr8AlW8v8dQkA==
 
 levn@^0.4.1:
   version "0.4.1"

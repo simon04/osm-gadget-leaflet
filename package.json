@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/simon04/osm-gadget-leaflet#readme",
   "dependencies": {
-    "leaflet": "^1.8.0-beta.3",
+    "leaflet": "^1.8.0",
     "leaflet-control-geocoder": "^2.4.0",
     "wikimedia-commons-file-path": "^2.1.1"
   },
