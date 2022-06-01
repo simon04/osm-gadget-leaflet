@@ -7,7 +7,7 @@ interface Options extends L.GeoJSONOptions {
   pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng): L.CircleMarker;
 }
 
-export default class WIWOSK extends L.GeoJSON {
+export default class WIWOSM extends L.GeoJSON {
   options: Options = {
     coordsToLatLng(coords: L.LatLngTuple) {
       // unproject EPSG:3857
