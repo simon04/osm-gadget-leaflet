@@ -128,17 +128,11 @@ export default class MediaWiki extends L.GeoJSON {
     ) {
       let html;
       if (feature.properties.title && feature.properties.wikipediaUrl) {
-        html = L.Util.template(
-          '<a href="{wikipediaUrl}" target="_blank">{title}</a>',
-          feature.properties
-        );
+        html = `<a href="${feature.properties.wikipediaUrl}" target="_blank">${feature.properties.title}</a>`;
         if (feature.properties.thumbnail) {
           const { thumbnailWidth } = this.options;
           const thumbnail = feature.properties.thumbnail(thumbnailWidth);
-          html += L.Util.template(
-            '<p><img src="{thumbnail}" width="{thumbnailWidth}"></p>',
-            { thumbnail, thumbnailWidth }
-          );
+          html += `<p><img src="${thumbnail}" width="${thumbnailWidth}"></p>`;
         }
       }
       return html;
