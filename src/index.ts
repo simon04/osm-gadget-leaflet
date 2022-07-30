@@ -53,7 +53,7 @@ const commons = new Mediawiki({
   gsnamespace: 6,
 });
 const marks = new Mediawiki({
-  url: 'https://' + (query.get('lang') || 'en') + '.wikipedia.org',
+  url: `https://${query.get('lang') || 'en'}.wikipedia.org`,
   icon: {
     iconUrl:
       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Wikipedia-logo-v2.svg/20px-Wikipedia-logo-v2.svg.png',

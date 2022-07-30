@@ -11,6 +11,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "prefer-template": "warn",
     "prefer-const": "warn",
     "prefer-destructuring": "warn"
   }

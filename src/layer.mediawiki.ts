@@ -150,7 +150,7 @@ export default class MediaWiki extends L.GeoJSON {
       return;
     }
     const bounds = this._map.getBounds();
-    let url = this.options.url + '/w/api.php';
+    let url = `${this.options.url}/w/api.php`;
     url += L.Util.getParamString({
       origin: '*',
       format: 'json',
@@ -199,7 +199,7 @@ export default class MediaWiki extends L.GeoJSON {
         },
         properties: {
           title: object.title,
-          wikipediaUrl: this.options.url + '/wiki/' + object.title,
+          wikipediaUrl: `${this.options.url}/wiki/${object.title}`,
           thumbnail: object.title.match(/^File:/)
             ? (width) => getFilePath(object.title, width)
             : undefined,
