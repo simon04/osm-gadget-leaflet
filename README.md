@@ -6,11 +6,10 @@ This implementation is based on [LeafletJS](https://leafletjs.com/) and might, e
 
 ## Examples
 
-- https://osm-gadget-leaflet.toolforge.org/#/?lang=en&article=Austria
 - https://osm-gadget-leaflet.toolforge.org/#/?lang=wikidata&article=Q40
 - https://osm-gadget-leaflet.toolforge.org/#/?lang=wikidata&article=Q40&article=Q183
 
 ## Building
 
 1. Run `yarn` to obtain the libraries and build the project
-2. Open `dist/index.html` in the browser and specify a query, e.g., `dist/index.html#/?lang=en&article=Austria`
+2. Open `dist/index.html` in the browser and specify a query, e.g., `dist/index.html#/?lang=en&article=Q40`

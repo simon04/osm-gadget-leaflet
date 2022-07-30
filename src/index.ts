@@ -6,8 +6,8 @@ import { Geocoder as GeocoderControl } from 'leaflet-control-geocoder';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 import './style.css';
-import { default as Mediawiki } from './layer.mediawiki';
-import { default as WIWOSM } from './layer.wiwosm';
+import Mediawiki from './layer.mediawiki';
+import Kartographer from './layer.kartographer';
 import * as state from './state';
 const query = state.getQuery();
 
@@ -31,11 +31,8 @@ map.attributionControl.setPrefix(
 new GeocoderControl({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
 
-// Prepare WIWOSM layer
-const wiwosm = new WIWOSM({
-  article: query.get('article'),
-  lang: query.get('lang') || 'en',
-});
+// Prepare Kartographer layer
+const kartographer = new Kartographer({});
 
 // Prepare marks layer
 const commonsThumbnails = new Mediawiki({
@@ -84,7 +81,7 @@ const layers = L.control
       }),
     },
     {
-      WIWOSM: wiwosm.addTo(map),
+      Kartographer: kartographer.addTo(map),
       'Commons World 🖼': commonsThumbnails.addTo(map),
       'Commons World': commons,
       'Wikipedia World': marks.addTo(map).updateMarks(),
@@ -106,10 +103,10 @@ if (query.get('lang') === 'de') {
 // Add a km/miles scale
 L.control.scale().addTo(map);
 
-wiwosm.loadWIWOSM();
+kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 window.addEventListener('hashchange', function () {
-  L.Util.setOptions(wiwosm, state.getQuery());
-  wiwosm.loadWIWOSM();
+  const query = state.getQuery();
+  kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 });
 map.on('zoomend moveend', marks.updateMarks, marks);
 map.on('zoomend moveend', state.saveMapView, map);
