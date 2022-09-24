@@ -104,7 +104,7 @@ if (query.get('lang') === 'de') {
 L.control.scale().addTo(map);
 
 kartographer.load(query.getAll('article'), query.get('lang') || 'en');
-window.addEventListener('hashchange', function () {
+window.addEventListener('hashchange', () => {
   const query = state.getQuery();
   kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 });
