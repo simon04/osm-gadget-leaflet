@@ -1,5 +1,6 @@
 import * as L from 'leaflet';
 import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
+import { debounce } from './debounce';
 
 interface Options extends L.GeoJSONOptions {
   url: string;
@@ -28,6 +29,8 @@ interface FeatureProperties {
 }
 
 export default class MediaWiki extends L.GeoJSON {
+  updateMarksDebounced: () => void;
+
   constructor(options: Partial<Options>) {
     super(undefined, options);
     L.Util.setOptions(this, {
@@ -39,6 +42,7 @@ export default class MediaWiki extends L.GeoJSON {
     if (!this.options.iconThumbnail && !this.options.icon) {
       throw new Error('Either iconThumbnail or icon is needed!');
     }
+    this.updateMarksDebounced = debounce(() => this.updateMarks(), 400);
   }
 
   options: Options = {
@@ -51,13 +55,13 @@ export default class MediaWiki extends L.GeoJSON {
 
   onAdd(map: L.Map): this {
     super.onAdd(map);
-    map.on('zoomend moveend', this.updateMarks, this);
+    map.on('zoom move', this.updateMarksDebounced, this);
     this.updateMarks();
     return this;
   }
   onRemove(map: L.Map): this {
     super.onRemove(map);
-    map.off('zoomend moveend', this.updateMarks, this);
+    map.off('zoom move', this.updateMarksDebounced, this);
     return this;
   }
 
@@ -175,7 +179,7 @@ export default class MediaWiki extends L.GeoJSON {
     const features = geosearch.map(toFeature, this);
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
-      features
+      features,
     };
     this.clearLayers();
     this.addData(geojson);
