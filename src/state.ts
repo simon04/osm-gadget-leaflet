@@ -31,14 +31,14 @@ export function setMapView(map: Map): void {
   }
 }
 
-export function saveMapView(): void {
+export function saveMapView(map: Map): void {
   if (!window.localStorage) {
     return;
   }
   const mapCenter = {
-    lat: this.getCenter().lat,
-    lng: this.getCenter().lng,
-    zoom: this.getZoom(),
+    lat: map.getCenter().lat,
+    lng: map.getCenter().lng,
+    zoom: map.getZoom(),
   };
   window.localStorage.setItem('mapCenter', JSON.stringify(mapCenter));
 }

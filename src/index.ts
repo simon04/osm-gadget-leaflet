@@ -108,4 +108,4 @@ window.addEventListener('hashchange', function () {
   const query = state.getQuery();
   kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 });
-map.on('zoomend moveend', state.saveMapView, map);
+map.on('zoomend moveend', () => state.saveMapView(map));
