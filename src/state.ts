@@ -6,11 +6,10 @@ export function getQuery(): URLSearchParams {
 
 export function setMapView(map: Map): void {
   const query = getQuery();
-  if (query.has('lat') && query.has('lon')) {
-    map.setView(
-      [+query.get('lat'), +query.get('lon')],
-      +query.get('zoom') || 9
-    );
+  const lat = query.get('lat');
+  const lon = query.get('lon');
+  if (lat && lon) {
+    map.setView([+lat, +lon], +(query.get('zoom') || '9'));
   } else {
     const centerString = window.localStorage
       ? window.localStorage.getItem('mapCenter')

@@ -46,9 +46,9 @@ export default class MediaWiki extends L.GeoJSON {
   }
 
   options: Options = {
-    url: undefined,
+    url: '',
     gsnamespace: 0,
-    icon: undefined,
+    icon: { iconUrl: '' },
     iconThumbnail: false,
     thumbnailWidth: 320,
   };
@@ -68,15 +68,15 @@ export default class MediaWiki extends L.GeoJSON {
   pointToThumbnailLayer(
     feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
     latlng: L.LatLng
-  ): L.Marker {
+  ): L.Marker | undefined {
     const zoom = this._map.getZoom();
     const width = zoom > 20 ? 320 : zoom > 18 ? 240 : zoom > 16 ? 120 : 60;
-    const iconUrl = feature.properties.thumbnail(320);
+    const iconUrl = feature.properties.thumbnail?.(320);
     if (!iconUrl) return;
     const icon = L.icon({
       iconUrl,
       iconAnchor: [width / 2, 0],
-      iconSize: [width, undefined],
+      iconSize: [width, NaN],
     });
     const marker = L.marker(latlng, {
       icon: icon,
@@ -91,7 +91,7 @@ export default class MediaWiki extends L.GeoJSON {
       });
       marker.on('mouseout', (event) => {
         const icon = event.target._icon as HTMLImageElement;
-        icon.style.zIndex = icon.getAttribute('zIndexOld');
+        icon.style.zIndex = icon.getAttribute('zIndexOld') || '';
       });
     }
     return marker;
@@ -106,41 +106,35 @@ export default class MediaWiki extends L.GeoJSON {
       icon: icon,
       title: feature.properties.title,
     });
-    const popup = getPopupHtml.call(this, feature);
-    if (popup) {
-      marker.bindPopup(popup, {
-        minWidth: 200,
-      });
-      marker.on('click', function () {
-        this.openPopup();
-        this.openedViaMouseOver = false;
-      });
-      marker.on('mouseover', function () {
-        this.openPopup();
-        this.openedViaMouseOver = true;
-      });
-      marker.on('mouseout', function () {
-        if (this.openedViaMouseOver) {
-          this.closePopup();
-        }
-      });
+    if (!feature.properties.title || !feature.properties.wikipediaUrl) {
+      return marker;
     }
-    return marker;
 
-    function getPopupHtml(
-      feature: GeoJSON.Feature<GeoJSON.Geometry, FeatureProperties>
-    ) {
-      let html;
-      if (feature.properties.title && feature.properties.wikipediaUrl) {
-        html = `<a href="${feature.properties.wikipediaUrl}" target="_blank">${feature.properties.title}</a>`;
-        if (feature.properties.thumbnail) {
-          const { thumbnailWidth } = this.options;
-          const thumbnail = feature.properties.thumbnail(thumbnailWidth);
-          html += `<p><img src="${thumbnail}" width="${thumbnailWidth}"></p>`;
-        }
-      }
-      return html;
+    let html = `<a href="${feature.properties.wikipediaUrl}" target="_blank">${feature.properties.title}</a>`;
+    if (feature.properties.thumbnail) {
+      const { thumbnailWidth } = this.options;
+      const thumbnail = feature.properties.thumbnail(thumbnailWidth);
+      html += `<p><img src="${thumbnail}" width="${thumbnailWidth}"></p>`;
     }
+
+    marker.bindPopup(html, {
+      minWidth: 200,
+    });
+    marker.on('click', () => {
+      marker.openPopup();
+      marker.getElement()?.removeAttribute('openedViaMouseOver');
+    });
+    marker.on('mouseover', () => {
+      marker.openPopup();
+      marker.getElement()?.setAttribute('openedViaMouseOver', '1');
+    });
+    marker.on('mouseout', () => {
+      if (marker.getElement()?.hasAttribute('openedViaMouseOver')) {
+        marker.closePopup();
+      }
+    });
+
+    return marker;
   }
 
   async updateMarks() {
@@ -176,18 +170,8 @@ export default class MediaWiki extends L.GeoJSON {
       return;
     }
     const geosearch = json.query.geosearch as GeosearchFeature[];
-    const features = geosearch.map(toFeature, this);
-    const geojson: GeoJSON.FeatureCollection = {
-      type: 'FeatureCollection',
-      features,
-    };
-    this.clearLayers();
-    this.addData(geojson);
-
-    function toFeature(
-      object: GeosearchFeature
-    ): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> {
-      return {
+    const features = geosearch.map(
+      (object): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> => ({
         type: 'Feature',
         geometry: {
           type: 'Point',
@@ -200,7 +184,13 @@ export default class MediaWiki extends L.GeoJSON {
             ? (width) => getFilePath(object.title, width)
             : undefined,
         },
-      };
-    }
+      })
+    );
+    const geojson: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
+      features,
+    };
+    this.clearLayers();
+    this.addData(geojson);
   }
 }
