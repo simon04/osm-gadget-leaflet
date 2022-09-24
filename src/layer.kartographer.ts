@@ -20,7 +20,7 @@ export default class Kartographer extends L.GeoJSON {
   }
 
   async load(article?: string | string[], lang?: string) {
-    if (!article || !lang) {
+    if (!article || !article.length || !lang) {
       return;
     }
     const url = `https://maps.wikimedia.org/geoshape${L.Util.getParamString({
