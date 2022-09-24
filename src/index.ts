@@ -84,7 +84,7 @@ const layers = L.control
       Kartographer: kartographer.addTo(map),
       'Commons World 🖼': commonsThumbnails.addTo(map),
       'Commons World': commons,
-      'Wikipedia World': marks.addTo(map).updateMarks(),
+      'Wikipedia World': marks.addTo(map),
     }
   )
   .addTo(map);

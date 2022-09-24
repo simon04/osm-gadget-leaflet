@@ -139,7 +139,7 @@ export default class MediaWiki extends L.GeoJSON {
     }
   }
 
-  updateMarks(): this {
+  async updateMarks() {
     if (!this._map) {
       return;
     }
@@ -161,26 +161,24 @@ export default class MediaWiki extends L.GeoJSON {
       ].join('|'),
     });
 
-    const xhr = new XMLHttpRequest();
-    xhr.addEventListener('load', updateLayer.bind(this));
-    xhr.open('GET', url);
-    xhr.send();
-    return this;
-
-    function updateLayer() {
-      if (xhr.status !== 200 || !xhr.responseText) {
-        return;
-      }
-      const json = JSON.parse(xhr.responseText);
-      if (json.error || !json.query.geosearch) {
-        console.warn(json.error);
-        return;
-      }
-      const geosearch = json.query.geosearch as GeosearchFeature[];
-      const geojson = geosearch.map(toFeature, this);
-      this.clearLayers();
-      this.addData(geojson);
+    const headers = { Accept: 'application/json' };
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      return;
     }
+    const json = await res.json();
+    if (json.error || !json.query.geosearch) {
+      console.warn(json.error);
+      return;
+    }
+    const geosearch = json.query.geosearch as GeosearchFeature[];
+    const features = geosearch.map(toFeature, this);
+    const geojson: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
+      features
+    };
+    this.clearLayers();
+    this.addData(geojson);
 
     function toFeature(
       object: GeosearchFeature
