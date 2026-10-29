@@ -1,10 +1,10 @@
-import { Map } from "leaflet";
+import type { MaplairMap } from "maplair";
 
 export function getQuery(): URLSearchParams {
   return new URLSearchParams((location.hash || "").substring(2));
 }
 
-export function setMapView(map: Map): void {
+export function setMapView(map: MaplairMap): void {
   const query = getQuery();
   const lat = query.get("lat");
   const lon = query.get("lon");
@@ -28,7 +28,7 @@ export function setMapView(map: Map): void {
   }
 }
 
-export function saveMapView(map: Map): void {
+export function saveMapView(map: MaplairMap): void {
   if (!window.localStorage) {
     return;
   }

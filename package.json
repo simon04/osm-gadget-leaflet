@@ -29,12 +29,10 @@
     "fmt": "vp fmt"
   },
   "dependencies": {
-    "leaflet": "^1.9.1",
-    "leaflet-control-geocoder": "^2.4.0",
+    "maplair": "^4.1.0",
     "wikimedia-commons-file-path": "^2.1.1"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.8.0",
     "typescript": "^7.0.2",
     "vite": "catalog:",
     "vite-plus": "catalog:"
