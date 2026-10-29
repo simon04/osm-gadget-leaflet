@@ -20,7 +20,7 @@ export function setMapView(map: Map): void {
         const center = JSON.parse(centerString);
         map.setView(center, center.zoom);
         init = true;
-      } catch (e) {
+      } catch {
         // ignore
       }
     }

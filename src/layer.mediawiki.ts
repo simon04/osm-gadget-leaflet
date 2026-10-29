@@ -56,7 +56,7 @@ export default class MediaWiki extends L.GeoJSON {
   onAdd(map: L.Map): this {
     super.onAdd(map);
     map.on('zoom move', this.updateMarksDebounced, this);
-    this.updateMarks();
+    void this.updateMarks();
     return this;
   }
   onRemove(map: L.Map): this {
@@ -67,7 +67,7 @@ export default class MediaWiki extends L.GeoJSON {
 
   pointToThumbnailLayer(
     feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
-    latlng: L.LatLng
+    latlng: L.LatLng,
   ): L.Marker | undefined {
     const zoom = this._map.getZoom();
     const width = zoom > 20 ? 320 : zoom > 18 ? 240 : zoom > 16 ? 120 : 60;
@@ -99,7 +99,7 @@ export default class MediaWiki extends L.GeoJSON {
 
   pointToIconLayer(
     feature: GeoJSON.Feature<GeoJSON.Point, FeatureProperties>,
-    latlng: L.LatLng
+    latlng: L.LatLng,
   ): L.Marker {
     const icon = L.icon(this.options.icon);
     const marker = L.marker(latlng, {
@@ -184,7 +184,7 @@ export default class MediaWiki extends L.GeoJSON {
             ? (width) => getFilePath(object.title, width)
             : undefined,
         },
-      })
+      }),
     );
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',

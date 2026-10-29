@@ -15,7 +15,7 @@ const query = state.getQuery();
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl,
   iconUrl,
@@ -26,7 +26,7 @@ L.Icon.Default.mergeOptions({
 const map = L.map('map');
 map.attributionControl.setPrefix(
   '<a href="https://github.com/simon04/osm-gadget-leaflet/" target="_blank">' +
-    '@simon04/osm-gadget-leaflet</a> (GPL v3)'
+    '@simon04/osm-gadget-leaflet</a> (GPL v3)',
 );
 new GeocoderControl({ position: 'topleft' }).addTo(map);
 state.setMapView(map);
@@ -63,29 +63,40 @@ const maxZoom = 24;
 const layers = L.control
   .layers(
     {
-      Wikimedia: L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png', {
+      Wikimedia: L.tileLayer(
+        'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png',
+        {
           maxNativeZoom: 19,
           maxZoom,
-          attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
-        })
-        .addTo(map),
-      OpenStreetMap: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxNativeZoom: 19,
-        maxZoom,
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      }),
-      OpenTopoMap: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxNativeZoom: 17,
-        maxZoom,
-        attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>), <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      }),
+          attribution:
+            '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
+        },
+      ).addTo(map),
+      OpenStreetMap: L.tileLayer(
+        'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          maxNativeZoom: 19,
+          maxZoom,
+          attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        },
+      ),
+      OpenTopoMap: L.tileLayer(
+        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {
+          maxNativeZoom: 17,
+          maxZoom,
+          attribution:
+            '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>), <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        },
+      ),
     },
     {
       Kartographer: kartographer.addTo(map),
       'Commons World 🖼': commonsThumbnails.addTo(map),
       'Commons World': commons,
       'Wikipedia World': marks.addTo(map),
-    }
+    },
   )
   .addTo(map);
 
@@ -94,18 +105,19 @@ if (query.get('lang') === 'de') {
     L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png', {
       maxNativeZoom: 18,
       maxZoom,
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }),
-    'OpenStreetMap.de'
+    'OpenStreetMap.de',
   );
 }
 
 // Add a km/miles scale
 L.control.scale().addTo(map);
 
-kartographer.load(query.getAll('article'), query.get('lang') || 'en');
+void kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 window.addEventListener('hashchange', () => {
   const query = state.getQuery();
-  kartographer.load(query.getAll('article'), query.get('lang') || 'en');
+  void kartographer.load(query.getAll('article'), query.get('lang') || 'en');
 });
 map.on('zoomend moveend', () => state.saveMapView(map));

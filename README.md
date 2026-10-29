@@ -11,5 +11,5 @@ This implementation is based on [LeafletJS](https://leafletjs.com/) and might, e
 
 ## Building
 
-1. Run `yarn` to obtain the libraries and build the project
+1. Run `vp install && vp build` (or `pnpm install && pnpm build`) to obtain the libraries and build the project
 2. Open `dist/index.html` in the browser and specify a query, e.g., `dist/index.html#/?lang=en&article=Q40`
