@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+import * as L from "leaflet";
 
 interface Options extends L.GeoJSONOptions {
   pointToLayer(feature: GeoJSON.Feature, latlng: L.LatLng): L.CircleMarker;
@@ -27,7 +27,7 @@ export default class Kartographer extends L.GeoJSON {
       getgeojson: 1,
       ids: article,
     })}`;
-    const headers = { Accept: 'application/geo+json' };
+    const headers = { Accept: "application/geo+json" };
     const res = await fetch(url, { headers });
     if (!res.ok) {
       return;

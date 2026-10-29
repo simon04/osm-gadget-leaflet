@@ -1,6 +1,6 @@
-import * as L from 'leaflet';
-import getFilePath from 'wikimedia-commons-file-path/build/wikimedia-commons-file-path';
-import { debounce } from './debounce';
+import * as L from "leaflet";
+import getFilePath from "wikimedia-commons-file-path/build/wikimedia-commons-file-path";
+import { debounce } from "./debounce";
 
 interface Options extends L.GeoJSONOptions {
   url: string;
@@ -18,7 +18,7 @@ export interface GeosearchFeature {
   lon: number;
   dist: number;
   primary: string;
-  type: 'camera';
+  type: "camera";
   name: null;
 }
 
@@ -40,28 +40,28 @@ export default class MediaWiki extends L.GeoJSON {
         : this.pointToIconLayer.bind(this),
     });
     if (!this.options.iconThumbnail && !this.options.icon) {
-      throw new Error('Either iconThumbnail or icon is needed!');
+      throw new Error("Either iconThumbnail or icon is needed!");
     }
     this.updateMarksDebounced = debounce(() => this.updateMarks(), 400);
   }
 
   options: Options = {
-    url: '',
+    url: "",
     gsnamespace: 0,
-    icon: { iconUrl: '' },
+    icon: { iconUrl: "" },
     iconThumbnail: false,
     thumbnailWidth: 320,
   };
 
   onAdd(map: L.Map): this {
     super.onAdd(map);
-    map.on('zoom move', this.updateMarksDebounced, this);
+    map.on("zoom move", this.updateMarksDebounced, this);
     void this.updateMarks();
     return this;
   }
   onRemove(map: L.Map): this {
     super.onRemove(map);
-    map.off('zoom move', this.updateMarksDebounced, this);
+    map.off("zoom move", this.updateMarksDebounced, this);
     return this;
   }
 
@@ -83,15 +83,15 @@ export default class MediaWiki extends L.GeoJSON {
       title: feature.properties.title,
     });
     if (feature.properties.wikipediaUrl) {
-      marker.on('click', () => window.open(feature.properties.wikipediaUrl));
-      marker.on('mouseover', (event) => {
+      marker.on("click", () => window.open(feature.properties.wikipediaUrl));
+      marker.on("mouseover", (event) => {
         const icon = event.target._icon as HTMLImageElement;
-        icon.setAttribute('zIndexOld', icon.style.zIndex);
-        icon.style.zIndex = '987654';
+        icon.setAttribute("zIndexOld", icon.style.zIndex);
+        icon.style.zIndex = "987654";
       });
-      marker.on('mouseout', (event) => {
+      marker.on("mouseout", (event) => {
         const icon = event.target._icon as HTMLImageElement;
-        icon.style.zIndex = icon.getAttribute('zIndexOld') || '';
+        icon.style.zIndex = icon.getAttribute("zIndexOld") || "";
       });
     }
     return marker;
@@ -120,16 +120,16 @@ export default class MediaWiki extends L.GeoJSON {
     marker.bindPopup(html, {
       minWidth: 200,
     });
-    marker.on('click', () => {
+    marker.on("click", () => {
       marker.openPopup();
-      marker.getElement()?.removeAttribute('openedViaMouseOver');
+      marker.getElement()?.removeAttribute("openedViaMouseOver");
     });
-    marker.on('mouseover', () => {
+    marker.on("mouseover", () => {
       marker.openPopup();
-      marker.getElement()?.setAttribute('openedViaMouseOver', '1');
+      marker.getElement()?.setAttribute("openedViaMouseOver", "1");
     });
-    marker.on('mouseout', () => {
-      if (marker.getElement()?.hasAttribute('openedViaMouseOver')) {
+    marker.on("mouseout", () => {
+      if (marker.getElement()?.hasAttribute("openedViaMouseOver")) {
         marker.closePopup();
       }
     });
@@ -144,22 +144,17 @@ export default class MediaWiki extends L.GeoJSON {
     const bounds = this._map.getBounds();
     let url = `${this.options.url}/w/api.php`;
     url += L.Util.getParamString({
-      origin: '*',
-      format: 'json',
-      action: 'query',
-      list: 'geosearch',
+      origin: "*",
+      format: "json",
+      action: "query",
+      list: "geosearch",
       gsnamespace: this.options.gsnamespace,
       gslimit: 500,
-      gsprop: 'type|name',
-      gsbbox: [
-        bounds.getNorth(),
-        bounds.getWest(),
-        bounds.getSouth(),
-        bounds.getEast(),
-      ].join('|'),
+      gsprop: "type|name",
+      gsbbox: [bounds.getNorth(), bounds.getWest(), bounds.getSouth(), bounds.getEast()].join("|"),
     });
 
-    const headers = { Accept: 'application/json' };
+    const headers = { Accept: "application/json" };
     const res = await fetch(url, { headers });
     if (!res.ok) {
       return;
@@ -170,24 +165,22 @@ export default class MediaWiki extends L.GeoJSON {
       return;
     }
     const geosearch = json.query.geosearch as GeosearchFeature[];
-    const features = geosearch.map(
-      (object): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [object.lon, object.lat],
-        },
-        properties: {
-          title: object.title,
-          wikipediaUrl: `${this.options.url}/wiki/${object.title}`,
-          thumbnail: object.title.match(/^File:/)
-            ? (width) => getFilePath(object.title, width)
-            : undefined,
-        },
-      }),
-    );
+    const features = geosearch.map((object): GeoJSON.Feature<GeoJSON.Point, FeatureProperties> => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [object.lon, object.lat],
+      },
+      properties: {
+        title: object.title,
+        wikipediaUrl: `${this.options.url}/wiki/${object.title}`,
+        thumbnail: object.title.match(/^File:/)
+          ? (width) => getFilePath(object.title, width)
+          : undefined,
+      },
+    }));
     const geojson: GeoJSON.FeatureCollection = {
-      type: 'FeatureCollection',
+      type: "FeatureCollection",
       features,
     };
     this.clearLayers();
